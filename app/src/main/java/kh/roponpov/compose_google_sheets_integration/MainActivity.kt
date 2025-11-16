@@ -4,13 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import kh.roponpov.compose_google_sheets_integration.view.add_data.AddDataScreen
+import kh.roponpov.compose_google_sheets_integration.view.bottom_navigation_bar.BottomNavItem
+import kh.roponpov.compose_google_sheets_integration.view.bottom_navigation_bar.BottomNavigationBar
+import kh.roponpov.compose_google_sheets_integration.view.home.HomeScreen
+import kh.roponpov.compose_google_sheets_integration.view.profile.ProfileScreen
 import kh.roponpov.compose_google_sheets_integration.ui.theme.ComposeGoogleSheetsIntegrationTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,29 +23,23 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ComposeGoogleSheetsIntegrationTheme {
-                Scaffold( modifier = Modifier.fillMaxSize() ) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                val navController = rememberNavController()
+                Scaffold(
+                    bottomBar = {
+                        BottomNavigationBar(navController)
+                    }
+                ) { padding ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = BottomNavItem.Home.route,
+                        modifier = Modifier.padding(padding)
+                    ) {
+                        composable(BottomNavItem.Home.route) { HomeScreen() }
+                        composable(BottomNavItem.Search.route) { AddDataScreen() }
+                        composable(BottomNavItem.Profile.route) { ProfileScreen() }
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ComposeGoogleSheetsIntegrationTheme {
-        Greeting("Android")
     }
 }
