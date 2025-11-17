@@ -5,9 +5,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
 
@@ -33,6 +36,16 @@ fun FilterRowSection(
             FilterChip(
                 selected = filter == selectedFilter,
                 onClick = { onFilterChange(filter) },
+                colors = FilterChipDefaults.filterChipColors(
+                    // UNSELECTED
+                    containerColor = Color.Transparent,
+                    labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    iconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+
+                    // SELECTED
+                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                ),
                 label = { Text(filter.label) },
                 modifier = Modifier.padding(end = 8.dp)
             )
