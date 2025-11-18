@@ -2,6 +2,7 @@ package kh.roponpov.compose_google_sheets_integration.view.home
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,9 +23,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -51,7 +50,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kh.roponpov.compose_google_sheets_integration.R
-import kh.roponpov.compose_google_sheets_integration.models.DegreeType
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
 import kh.roponpov.compose_google_sheets_integration.models.PaymentStatus
 import kh.roponpov.compose_google_sheets_integration.ui.theme.ComposeGoogleSheetsIntegrationTheme
@@ -79,6 +77,7 @@ fun MemberCard(
                 isExpanded = !isExpanded
                 onClick()
             },
+        border = BorderStroke(0.dp, color = MaterialTheme.colorScheme.onPrimary),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
@@ -199,7 +198,7 @@ fun MemberCard(
 
             // ================= EXPANDABLE CONTENT (FROM DIVIDER DOWN) =================
             if (isExpanded) {
-                HorizontalDivider()
+//                HorizontalDivider()
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

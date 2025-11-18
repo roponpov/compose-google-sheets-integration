@@ -86,6 +86,7 @@ fun HomeScreen() {
         .filter { selectedFilter.matches(it) }
 
     Scaffold(
+        containerColor = Color(0xFFF5F5F5),
         topBar = {
             Row (
                 modifier = Modifier
