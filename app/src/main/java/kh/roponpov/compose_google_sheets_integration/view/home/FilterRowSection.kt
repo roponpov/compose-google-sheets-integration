@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
+import kh.roponpov.compose_google_sheets_integration.models.PaymentStatus
 
 enum class MemberFilter(val label: String) {
     All("All"),
@@ -55,10 +56,11 @@ fun FilterRowSection(
 
 fun MemberFilter.matches(member: MemberRegistrationModel): Boolean = when (this) {
     MemberFilter.All -> true
-    MemberFilter.Paid -> member.paymentStatus.equals("Paid", ignoreCase = true)
-    MemberFilter.Unpaid -> member.paymentStatus.equals("Unpaid", ignoreCase = true)
+    MemberFilter.Paid -> member.paymentStatus == PaymentStatus.PAID
+    MemberFilter.Unpaid -> member.paymentStatus == PaymentStatus.UNPAID
     MemberFilter.Joined -> member.joinGroup
     MemberFilter.NotJoined -> !member.joinGroup
+
 }
 
 fun MemberRegistrationModel.matchesSearch(query: String): Boolean {

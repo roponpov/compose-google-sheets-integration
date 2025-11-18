@@ -159,7 +159,6 @@ fun HomeScreen() {
                 shape = RoundedCornerShape(10.dp)
             )
 
-
             // Filter chips
             FilterRowSection(
                 selectedFilter = selectedFilter,
@@ -176,7 +175,6 @@ fun HomeScreen() {
                 items(filtered, key = { it.id }) { member ->
                     MemberCard(
                         member = member,
-                        onClick = { /*onMemberClick(member)*/ memberRegistrationViewModel.getMemberRegistration() }
                     )
                 }
             }
