@@ -2,12 +2,14 @@ package kh.roponpov.compose_google_sheets_integration.view.add_member
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -15,11 +17,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -36,11 +36,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kh.roponpov.compose_google_sheets_integration.models.DegreeType
 import kh.roponpov.compose_google_sheets_integration.models.GenderType
@@ -100,7 +100,6 @@ fun AddMemberScreen(
                 .fillMaxSize(),
             onSubmit = { member ->
                 // TODO: Call your API here and post `member`
-                // e.g. viewModel.submitMember(member)
             },
             onCancel = {
                 navigator.popBackStack()
@@ -148,21 +147,25 @@ private fun AddMemberForm(
         )
 
         // Latin Name
-        OutlinedTextField(
+        AppTextField(
+            label = "Latin Name",
             value = latinName,
             onValueChange = { latinName = it },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Latin Name") },
-            singleLine = true
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            )
         )
 
         // Khmer Name
-        OutlinedTextField(
+        AppTextField(
+            label = "Khmer Name",
             value = khmerName,
             onValueChange = { khmerName = it },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Khmer Name") },
-            singleLine = true
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            )
         )
 
         // Gender
@@ -170,23 +173,21 @@ private fun AddMemberForm(
             expanded = genderExpanded,
             onExpandedChange = { genderExpanded = !genderExpanded },
         ) {
-            OutlinedTextField(
-                modifier = Modifier
-                    .menuAnchor()
-                    .fillMaxWidth(),
+            AppDropdownField(
+                label = "Gender",
                 value = gender.text,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text("Gender") },
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = genderExpanded)
-                }
+                expanded = genderExpanded,
+                onClick = { genderExpanded = !genderExpanded },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor()
             )
+
             ExposedDropdownMenu(
                 expanded = genderExpanded,
                 onDismissRequest = { genderExpanded = false }
             ) {
-                GenderType.values().forEach { option ->
+                GenderType.entries.forEach { option ->
                     DropdownMenuItem(
                         text = { Text(option.text) },
                         onClick = {
@@ -199,21 +200,27 @@ private fun AddMemberForm(
         }
 
         // Email
-        OutlinedTextField(
+        AppTextField(
+            label = "Email",
             value = email,
             onValueChange = { email = it },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Email") },
-            singleLine = true
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next
+            )
         )
 
         // Phone
-        OutlinedTextField(
+        AppTextField(
+            label = "Phone",
             value = phone,
             onValueChange = { phone = it },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Phone") },
-            singleLine = true
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Phone,
+                imeAction = ImeAction.Next
+            )
         )
 
         // Payment Status
@@ -221,23 +228,21 @@ private fun AddMemberForm(
             expanded = paymentExpanded,
             onExpandedChange = { paymentExpanded = !paymentExpanded },
         ) {
-            OutlinedTextField(
-                modifier = Modifier
-                    .menuAnchor()
-                    .fillMaxWidth(),
+            AppDropdownField(
+                label = "Payment Status",
                 value = paymentStatus.text,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text("Payment Status") },
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = paymentExpanded)
-                }
+                expanded = paymentExpanded,
+                onClick = { paymentExpanded = !paymentExpanded },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor()
             )
+
             ExposedDropdownMenu(
                 expanded = paymentExpanded,
                 onDismissRequest = { paymentExpanded = false }
             ) {
-                PaymentStatus.values().forEach { option ->
+                PaymentStatus.entries.forEach { option ->
                     DropdownMenuItem(
                         text = { Text(option.text) },
                         onClick = {
@@ -249,32 +254,34 @@ private fun AddMemberForm(
             }
         }
 
-        // Address
-        OutlinedTextField(
+        // Address (multiline)
+        AppTextArea(
+            label = "Address",
             value = address,
             onValueChange = { address = it },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Address") },
-            minLines = 2,
-            maxLines = 3
         )
 
-        // DOB (you can replace with real date picker later)
-        OutlinedTextField(
+        // DOB
+        AppTextField(
+            label = "Date of Birth (dd/MM/yyyy)",
             value = dob,
             onValueChange = { dob = it },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Date of Birth (dd/MM/yyyy)") },
-            singleLine = true
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            )
         )
 
         // Registration Date
-        OutlinedTextField(
+        AppTextField(
+            label = "Registration Date (dd/MM/yyyy)",
             value = registrationDate,
             onValueChange = { registrationDate = it },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Registration Date (dd/MM/yyyy)") },
-            singleLine = true
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            )
         )
 
         // Degree
@@ -282,23 +289,21 @@ private fun AddMemberForm(
             expanded = degreeExpanded,
             onExpandedChange = { degreeExpanded = !degreeExpanded },
         ) {
-            OutlinedTextField(
-                modifier = Modifier
-                    .menuAnchor()
-                    .fillMaxWidth(),
+            AppDropdownField(
+                label = "Degree",
                 value = degree.text,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text("Degree") },
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = degreeExpanded)
-                }
+                expanded = degreeExpanded,
+                onClick = { degreeExpanded = !degreeExpanded },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor()
             )
+
             ExposedDropdownMenu(
                 expanded = degreeExpanded,
                 onDismissRequest = { degreeExpanded = false }
             ) {
-                DegreeType.values().forEach { option ->
+                DegreeType.entries.forEach { option ->
                     DropdownMenuItem(
                         text = { Text(option.text) },
                         onClick = {
@@ -317,14 +322,12 @@ private fun AddMemberForm(
             onCheckedChange = { joinGroup = it }
         )
 
-        // Remark
-        OutlinedTextField(
+        // Remark (multiline)
+        AppTextArea(
+            label = "Remark",
             value = remark,
             onValueChange = { remark = it },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Remark") },
-            minLines = 2,
-            maxLines = 4
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -338,7 +341,7 @@ private fun AddMemberForm(
                 onCancel = onCancel,
                 onSubmit = {
                     val member = MemberRegistrationModel(
-                        id = 0, // or generate locally if needed
+                        id = 0,
                         latinName = latinName,
                         khmerName = khmerName,
                         gender = gender,
@@ -365,7 +368,7 @@ private fun RowWithSwitch(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
-    androidx.compose.foundation.layout.Row(
+    Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -386,7 +389,7 @@ private fun RowWithActions(
     onCancel: () -> Unit,
     onSubmit: () -> Unit,
 ) {
-    androidx.compose.foundation.layout.Row(
+    Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.End)
     ) {
@@ -397,18 +400,4 @@ private fun RowWithActions(
             Text("Submit")
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun AddMemberScreenPreview() {
-    val navController = rememberNavController()
-    AddMemberScreen(navigator = navController)
-}
-
-
-@Composable
-@Preview
-fun PreviewAddMemberScreen() {
-    AddMemberScreen(rememberNavController())
 }
