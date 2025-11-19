@@ -31,7 +31,7 @@ fun FilterRowSection(
     Row(
         modifier = Modifier
             .horizontalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .padding(start = 16.dp, end = 8.dp, top = 5.dp, bottom = 5.dp)
     ) {
         MemberFilter.entries.forEach { filter ->
             FilterChip(
@@ -39,7 +39,7 @@ fun FilterRowSection(
                 onClick = { onFilterChange(filter) },
                 colors = FilterChipDefaults.filterChipColors(
                     // UNSELECTED
-                    containerColor = Color.Transparent,
+                    containerColor = Color.White,
                     labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     iconColor = MaterialTheme.colorScheme.onSurfaceVariant,
 

@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation("androidx.navigation:navigation-compose:2.8.4")
+    implementation (libs.accompanist.systemuicontroller)
     implementation(libs.coil.compose)
     implementation(libs.androidx.runtime.livedata)
     testImplementation(libs.junit)

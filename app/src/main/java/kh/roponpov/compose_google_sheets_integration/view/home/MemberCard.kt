@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -46,17 +45,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kh.roponpov.compose_google_sheets_integration.R
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
 import kh.roponpov.compose_google_sheets_integration.models.PaymentStatus
 import kh.roponpov.compose_google_sheets_integration.ui.theme.ComposeGoogleSheetsIntegrationTheme
-import kh.roponpov.compose_google_sheets_integration.view.add_data.AddDataScreen
-import kh.roponpov.compose_google_sheets_integration.view.bottom_navigation_bar.BottomNavItem
-import kh.roponpov.compose_google_sheets_integration.view.bottom_navigation_bar.BottomNavigationBar
-import kh.roponpov.compose_google_sheets_integration.view.profile.ProfileScreen
 
 @Composable
 fun MemberCard(
@@ -85,8 +78,6 @@ fun MemberCard(
             modifier = Modifier.padding(14.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-
-            // ================= HEADER =================
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -96,7 +87,6 @@ fun MemberCard(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.weight(1f)
                 ) {
-                    // Avatar with initial
                     Box(
                         modifier = Modifier
                             .size(40.dp)
@@ -143,28 +133,16 @@ fun MemberCard(
                     }
                 }
 
-                // Expand icon (keep your original logic)
                 Icon(
                     imageVector = if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                     contentDescription = if (isExpanded) "Collapse" else "Expand"
                 )
             }
 
-            // ================= DEGREE + GROUP (ALWAYS VISIBLE) =================
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-//                AssistChip(
-//                    onClick = { },
-//                    label = {
-//                        Text(
-//                            member.degree.text,
-//                            style = MaterialTheme.typography.labelSmall
-//                        )
-//                    }
-//                )
-
                 Surface(
                     modifier = Modifier.border(
                         width = 1.dp,
@@ -192,21 +170,18 @@ fun MemberCard(
                         )
                     }
                 }
-
                 JoinGroupChip(joined = member.joinGroup)
             }
 
-            // ================= EXPANDABLE CONTENT (FROM DIVIDER DOWN) =================
             if (isExpanded) {
-//                HorizontalDivider()
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(
-                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.02f),
                             shape = RoundedCornerShape(12.dp)
                         )
-                        .padding(12.dp),
+                        .padding(10.dp),
                     verticalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
 
@@ -216,64 +191,34 @@ fun MemberCard(
                         color = MaterialTheme.colorScheme.primary
                     )
 
-                    // Payment
-                    IconLabel(
-                        icon = R.drawable.payment_status_icon,
-                        label = "",
-                        result = {
-                             Box(
-                                modifier = Modifier
-                                    .background(
-                                        color = if (member.paymentStatus == PaymentStatus.PAID)
-                                            Color(0xFF2E7D32).copy(alpha = 0.12f)
-                                        else
-                                            MaterialTheme.colorScheme.error.copy(alpha = 0.15f),
-                                        shape = RoundedCornerShape(5.dp)
-                                    )
-                                    .padding(horizontal = 5.dp, vertical = 0.dp)
-                            ) {
-                                Text(
-                                    text = if (member.paymentStatus == PaymentStatus.PAID) "Paid" else "Unpaid",
-                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium),
-                                    color = if (member.joinGroup)
-                                        Color(0xFF2E7D32)
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            "Payment Status: ",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    color = if (member.paymentStatus == PaymentStatus.PAID)
+                                        Color(0xFF2E7D32).copy(alpha = 0.12f)
                                     else
-                                        MaterialTheme.colorScheme.error
+                                        MaterialTheme.colorScheme.error.copy(alpha = 0.15f),
+                                    shape = RoundedCornerShape(5.dp)
                                 )
-                            }
+                                .padding(horizontal = 5.dp, vertical = 0.dp)
+                        ) {
+                            Text(
+                                text = if (member.paymentStatus == PaymentStatus.PAID) "Paid" else "Unpaid",
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                color = if (member.joinGroup)
+                                    Color(0xFF2E7D32)
+                                else
+                                    MaterialTheme.colorScheme.error
+                            )
                         }
-                    )
+                    }
 
-
-//                    Row(modifier = Modifier.fillMaxWidth()) {
-//                        Text(
-//                            "Payment Status: ",
-//                            style = MaterialTheme.typography.bodySmall,
-//                            color = MaterialTheme.colorScheme.onSurfaceVariant
-//                        )
-//                        Box(
-//                            modifier = Modifier
-//                                .background(
-//                                    color = if (member.paymentStatus == PaymentStatus.PAID)
-//                                        Color(0xFF2E7D32).copy(alpha = 0.12f)
-//                                    else
-//                                        MaterialTheme.colorScheme.error.copy(alpha = 0.15f),
-//                                    shape = RoundedCornerShape(5.dp)
-//                                )
-//                                .padding(horizontal = 5.dp, vertical = 0.dp)
-//                        ) {
-//                            Text(
-//                                text = if (member.paymentStatus == PaymentStatus.PAID) "Paid" else "Unpaid",
-//                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium),
-//                                color = if (member.joinGroup)
-//                                    Color(0xFF2E7D32)
-//                                else
-//                                    MaterialTheme.colorScheme.error
-//                            )
-//                        }
-//                    }
-
-                    // DOB
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             "Gender: ",
@@ -284,11 +229,11 @@ fun MemberCard(
                             member.gender.text,
                             style = MaterialTheme.typography.bodySmall,
                             maxLines = 1,
+                            fontWeight = FontWeight.Bold,
                             overflow = TextOverflow.Ellipsis
                         )
                     }
 
-                    // Registered Date
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             "Registered: ",
@@ -298,6 +243,7 @@ fun MemberCard(
                         Text(
                             member.registrationDate,
                             style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Bold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -329,8 +275,6 @@ private fun JoinGroupChip(joined: Boolean) {
         MaterialTheme.colorScheme.onSurfaceVariant
     }
 
-
-
     Surface(
         color = bg,
         shape = RoundedCornerShape(5.dp)
@@ -356,19 +300,13 @@ private fun JoinGroupChip(joined: Boolean) {
     }
 }
 
-
 @Composable
-private fun ContactSection(
-    email: String,
-    phone: String,
-    address: String,
-) {
+private fun ContactSection(email: String, phone: String, address: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 8.dp)
             .background(
-                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.02f),
                 shape = RoundedCornerShape(10.dp)
             )
             .padding(10.dp),
@@ -461,47 +399,13 @@ private fun ContactSection(
 }
 
 @Composable
-private fun IconLabel(
-    label: String,
-    icon: Int,
-    result: @Composable () -> Unit
-){
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .size(22.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                painter = painterResource(icon),
-                contentDescription = null,
-                modifier = Modifier.size(14.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
-        Text(
-            label,
-            style = MaterialTheme.typography.bodySmall,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-        result()
-    }
-}
-
-@Composable
 private fun RemarkSection(remark: String){
     if (remark.isNotBlank()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.04f),
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.02f),
                     shape = RoundedCornerShape(10.dp)
                 )
                 .padding(8.dp),
@@ -509,7 +413,7 @@ private fun RemarkSection(remark: String){
         ) {
             Text(
                 "Remark",
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.primary
             )
             Text(
@@ -521,7 +425,6 @@ private fun RemarkSection(remark: String){
     }
 }
 
-
 @Composable
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_NO,
@@ -530,20 +433,9 @@ private fun RemarkSection(remark: String){
 )
 fun PreviewMyJetpacks(){
     ComposeGoogleSheetsIntegrationTheme {
-        val navController = rememberNavController()
-        Scaffold(
-            bottomBar = {
-                BottomNavigationBar(navController)
-            }
-        ) { padding ->
-            NavHost(
-                navController = navController,
-                startDestination = BottomNavItem.Home.route,
-                modifier = Modifier.padding(padding)
-            ) {
-                composable(BottomNavItem.Home.route) { HomeScreen() }
-                composable(BottomNavItem.Search.route) { AddDataScreen() }
-                composable(BottomNavItem.Profile.route) { ProfileScreen() }
+        ComposeGoogleSheetsIntegrationTheme {
+            Scaffold { padding ->
+                HomeScreen(padding, rememberNavController())
             }
         }
     }

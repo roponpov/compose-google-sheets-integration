@@ -18,7 +18,6 @@ enum class DegreeType(val text: String) {
     ASSOCIATE("Associate"),
 }
 
-
 data class MemberRegistrationModel(
     val id: Int,
     val latinName: String,
