@@ -1,6 +1,9 @@
 package kh.roponpov.compose_google_sheets_integration.view.add_member
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,21 +15,21 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -34,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -41,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -55,7 +60,6 @@ import kh.roponpov.compose_google_sheets_integration.models.DegreeType
 import kh.roponpov.compose_google_sheets_integration.models.GenderType
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
 import kh.roponpov.compose_google_sheets_integration.models.PaymentStatus
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -110,10 +114,7 @@ fun AddMemberScreen(
                 .padding(innerPadding)
                 .fillMaxSize(),
             onSubmit = { member ->
-                // TODO: Call your API here and post `member`
-            },
-            onCancel = {
-                navigator.popBackStack()
+                println(member)
             }
         )
     }
@@ -124,8 +125,9 @@ fun AddMemberScreen(
 private fun AddMemberForm(
     modifier: Modifier = Modifier,
     onSubmit: (MemberRegistrationModel) -> Unit,
-    onCancel: () -> Unit,
 ) {
+    val focusManager = LocalFocusManager.current
+
     // === FORM STATES ===
     var latinName by rememberSaveable { mutableStateOf("") }
     var khmerName by rememberSaveable { mutableStateOf("") }
@@ -145,223 +147,250 @@ private fun AddMemberForm(
     var paymentExpanded by rememberSaveable { mutableStateOf(false) }
     var degreeExpanded by rememberSaveable { mutableStateOf(false) }
 
-    Column(
-        modifier = modifier
-            .padding(horizontal = 16.dp)
-            .verticalScroll(rememberScrollState()),
-    ) {
-        Spacer(modifier = Modifier.height(16.dp))
-        // LATIN NAME
-        AppTextField(
-            label = "Latin Name",
-            value = latinName,
-            placeholder = "Enter your latin name",
-            onValueChange = { latinName = it },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next
-            )
-        )
-
-        // KHMER NAME
-        AppTextField(
-            label = "Khmer Name",
-            value = khmerName,
-            placeholder = "Enter your khmer name",
-            onValueChange = { khmerName = it },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next
-            )
-        )
-
-        // Gender
-        ExposedDropdownMenuBox(
-            expanded = genderExpanded,
-            onExpandedChange = { genderExpanded = !genderExpanded },
-        ) {
-            AppDropdownField(
-                label = "Gender",
-                value = gender?.text ?: "Select gender",
-                valueStyle = MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp, color = if (gender == null) Color.Gray else MaterialTheme.colorScheme.primary),
-                expanded = genderExpanded,
-                onClick = { genderExpanded = !genderExpanded },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp)
-                    .menuAnchor()
-            )
-
-            ExposedDropdownMenu(
-                expanded = genderExpanded,
-                onDismissRequest = { genderExpanded = false },
-                containerColor = MaterialTheme.colorScheme.onPrimary
+    Column (
+        modifier = Modifier
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
             ) {
-                GenderType.entries.forEach { option ->
-                    DropdownMenuItem(
-                        text = { Text(option.text) },
-                        onClick = {
-                            gender = option
-                            genderExpanded = false
-                        }
-                    )
-                }
+                focusManager.clearFocus()
             }
-        }
-
-        // Email
-        AppTextField(
-            label = "Email",
-            value = email,
-            placeholder = "Enter your email",
-            onValueChange = { email = it },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next
-            )
-        )
-
-        // Phone
-        AppTextField(
-            label = "Phone",
-            value = phone,
-            placeholder = "Enter your phone number",
-            onValueChange = { phone = it },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Phone,
-                imeAction = ImeAction.Next
-            )
-        )
-
-        // Payment Status
-        ExposedDropdownMenuBox(
-            expanded = paymentExpanded,
-            onExpandedChange = { paymentExpanded = !paymentExpanded },
-        ) {
-            AppDropdownField(
-                label = "Payment Status",
-                value = paymentStatus?.text ?: "Select payment status",
-                MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp, color = if (paymentStatus == null) Color.Gray else MaterialTheme.colorScheme.primary),
-                expanded = paymentExpanded,
-                onClick = { paymentExpanded = !paymentExpanded },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp)
-                    .menuAnchor()
-            )
-
-            ExposedDropdownMenu(
-                expanded = paymentExpanded,
-                onDismissRequest = { paymentExpanded = false },
-                containerColor = MaterialTheme.colorScheme.onPrimary
-            ) {
-                PaymentStatus.entries.forEach { option ->
-                    DropdownMenuItem(
-                        text = { Text(option.text) },
-                        onClick = {
-                            paymentStatus = option
-                            paymentExpanded = false
-                        }
-                    )
-                }
-            }
-        }
-
-        // Address (multiline)
-        AppTextArea(
-            label = "Address",
-            placeholder = "Enter the address",
-            value = address,
-            onValueChange = { address = it },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
-        )
-
-        // DOB
-        AppTextField(
-            label = "Date of Birth",
-            value = dob,
-            placeholder = "Select your date of birth",
-            onValueChange = { dob = it },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next
-            )
-        )
-
-        // Registration Date
-        AppTextField(
-            label = "Registration Date",
-            value = registrationDate,
-            placeholder = "Enter your registration date",
-            onValueChange = { registrationDate = it },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next
-            )
-        )
-
-        // Degree
-        ExposedDropdownMenuBox(
-            expanded = degreeExpanded,
-            onExpandedChange = { degreeExpanded = !degreeExpanded },
-        ) {
-            AppDropdownField(
-                label = "Degree",
-                value = degree?.text ?: "Select degree",
-                MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp, color = if (degree == null) Color.Gray else MaterialTheme.colorScheme.primary),
-                expanded = degreeExpanded,
-                onClick = { degreeExpanded = !degreeExpanded },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp)
-                    .menuAnchor()
-            )
-
-            ExposedDropdownMenu(
-                expanded = degreeExpanded,
-                onDismissRequest = { degreeExpanded = false },
-                containerColor = MaterialTheme.colorScheme.onPrimary
-            ) {
-                DegreeType.entries.forEach { option ->
-                    DropdownMenuItem(
-                        text = { Text(option.text) },
-                        onClick = {
-                            degree = option
-                            degreeExpanded = false
-                        }
-                    )
-                }
-            }
-        }
-
-        SettingSwitchRow(
-            title = "Join Group",
-            subtitle = "Allow this user to join the group",
-            checked = joinGroup,
-            onCheckedChange = { joinGroup = it }
-        )
-
-        // Remark (multiline)
-        AppTextArea(
-            label = "Remark",
-            placeholder = "Enter the remark",
-            value = remark,
-            onValueChange = { remark = it },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Buttons
+    ){
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.End
+            modifier = modifier
+                .weight(1f)
+                .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState()),
         ) {
-            RowWithActions(
-                onCancel = onCancel,
-                onSubmit = {
+            Spacer(modifier = Modifier.height(16.dp))
+            // LATIN NAME
+            AppTextField(
+                label = "Latin Name",
+                value = latinName,
+                placeholder = "Enter your latin name",
+                onValueChange = { latinName = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next
+                )
+            )
+
+            // KHMER NAME
+            AppTextField(
+                label = "Khmer Name",
+                value = khmerName,
+                placeholder = "Enter your khmer name",
+                onValueChange = { khmerName = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next
+                )
+            )
+
+            // Gender
+            ExposedDropdownMenuBox(
+                expanded = genderExpanded,
+                onExpandedChange = { genderExpanded = !genderExpanded },
+            ) {
+                AppDropdownField(
+                    label = "Gender",
+                    value = gender?.text ?: "Select gender",
+                    valueStyle = MaterialTheme.typography.bodySmall.copy(
+                        fontSize = 13.sp,
+                        color = if (gender == null) Color.Gray else MaterialTheme.colorScheme.secondary
+                    ),
+                    expanded = genderExpanded,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp)
+                        .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                )
+
+                ExposedDropdownMenu(
+                    expanded = genderExpanded,
+                    onDismissRequest = { genderExpanded = false },
+                    containerColor = MaterialTheme.colorScheme.onPrimary
+                ) {
+                    GenderType.entries.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(option.text) },
+                            onClick = {
+                                gender = option
+                                genderExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            // Email
+            AppTextField(
+                label = "Email",
+                value = email,
+                placeholder = "Enter your email",
+                onValueChange = { email = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                )
+            )
+
+            // Phone
+            AppTextField(
+                label = "Phone",
+                value = phone,
+                placeholder = "Enter your phone number",
+                onValueChange = { phone = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Phone,
+                    imeAction = ImeAction.Next
+                )
+            )
+
+            // Payment Status
+            ExposedDropdownMenuBox(
+                expanded = paymentExpanded,
+                onExpandedChange = { paymentExpanded = !paymentExpanded },
+            ) {
+                AppDropdownField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp)
+                        .menuAnchor(MenuAnchorType.PrimaryNotEditable),
+                    label = "Payment Status",
+                    value = paymentStatus?.text ?: "Select payment status",
+                    valueStyle = MaterialTheme.typography.bodySmall.copy(
+                        fontSize = 13.sp,
+                        color = if (paymentStatus == null) Color.Gray else MaterialTheme.colorScheme.secondary
+                    ),
+                    expanded = paymentExpanded,
+                )
+
+                ExposedDropdownMenu(
+                    expanded = paymentExpanded,
+                    onDismissRequest = { paymentExpanded = false },
+                    containerColor = MaterialTheme.colorScheme.onPrimary
+                ) {
+                    PaymentStatus.entries.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(option.text) },
+                            onClick = {
+                                paymentStatus = option
+                                paymentExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            // Address (multiline)
+            AppTextArea(
+                label = "Address",
+                placeholder = "Enter the address",
+                value = address,
+                onValueChange = { address = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+            )
+
+            // Date of Birth
+            AppDateTextField(
+                label = "Date of Birth",
+                value = dob,
+                placeholder = "Select your date of birth",
+                onDobChange = { dob = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp)
+            )
+
+            // Registration Date
+            AppDateTextField(
+                label = "Registration Date",
+                value = registrationDate,
+                placeholder = "Enter your registration date",
+                onDobChange = { registrationDate = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp)
+            )
+
+            // Degree
+            ExposedDropdownMenuBox(
+                expanded = degreeExpanded,
+                onExpandedChange = { degreeExpanded = !degreeExpanded },
+            ) {
+                AppDropdownField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp)
+                        .menuAnchor(MenuAnchorType.PrimaryNotEditable),
+                    label = "Degree",
+                    value = degree?.text ?: "Select degree",
+                    valueStyle = MaterialTheme.typography.bodySmall.copy(
+                        fontSize = 13.sp,
+                        color = if (degree == null) Color.Gray else MaterialTheme.colorScheme.secondary
+                    ),
+                    expanded = degreeExpanded,
+                )
+
+                ExposedDropdownMenu(
+                    expanded = degreeExpanded,
+                    onDismissRequest = { degreeExpanded = false },
+                    containerColor = MaterialTheme.colorScheme.onPrimary
+                ) {
+                    DegreeType.entries.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(option.text) },
+                            onClick = {
+                                degree = option
+                                degreeExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            SettingSwitchRow(
+                title = "Join Group",
+                subtitle = "Allow this user to join the group",
+                checked = joinGroup,
+                onCheckedChange = { joinGroup = it }
+            )
+
+            // Remark
+            AppTextArea(
+                label = "Remark",
+                placeholder = "Enter the remark",
+                value = remark,
+                onValueChange = { remark = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 16.dp)
+                .height(50.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .clickable {
                     val member = MemberRegistrationModel(
                         id = 0,
                         latinName = latinName,
@@ -378,10 +407,17 @@ private fun AddMemberForm(
                         remark = remark
                     )
                     onSubmit(member)
+                    focusManager.clearFocus()
                 }
+        ) {
+            Text(
+                "Submit",
+                modifier = Modifier.align(Alignment.Center),
+                style = MaterialTheme.typography.titleMedium.copy(
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -424,24 +460,6 @@ fun SettingSwitchRow(
     }
 }
 
-
-@Composable
-private fun RowWithActions(
-    onCancel: () -> Unit,
-    onSubmit: () -> Unit,
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.End)
-    ) {
-        TextButton(onClick = onCancel) {
-            Text("Cancel")
-        }
-        Button(onClick = onSubmit) {
-            Text("Submit")
-        }
-    }
-}
 
 @Composable
 @Preview

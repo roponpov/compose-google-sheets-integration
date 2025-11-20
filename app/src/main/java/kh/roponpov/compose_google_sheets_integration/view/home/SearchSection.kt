@@ -47,7 +47,7 @@ fun SearchSection(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 0.dp)
-            .height(40.dp) // <<< SMALL HEIGHT, CLEAN, NO CLIP
+            .height(45.dp) // <<< SMALL HEIGHT, CLEAN, NO CLIP
             .background(
                 color = Color.White,
                 shape = RoundedCornerShape(10.dp)

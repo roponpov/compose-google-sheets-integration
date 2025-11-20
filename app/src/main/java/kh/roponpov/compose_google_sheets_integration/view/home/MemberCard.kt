@@ -71,6 +71,9 @@ fun MemberCard(
                 onClick()
             },
         border = BorderStroke(0.dp, color = MaterialTheme.colorScheme.onPrimary),
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = MaterialTheme.colorScheme.onPrimary
+        ),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {

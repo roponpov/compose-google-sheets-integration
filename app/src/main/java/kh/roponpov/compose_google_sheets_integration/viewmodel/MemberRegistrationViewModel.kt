@@ -8,7 +8,7 @@ import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationMo
 import kh.roponpov.compose_google_sheets_integration.repositories.MemberRegistrationRepository
 import kotlinx.coroutines.launch
 
-class MemberRegistrationViewModel () : ViewModel() {
+class MemberRegistrationViewModel : ViewModel() {
     private val memberRegistrationRepository: MemberRegistrationRepository = MemberRegistrationRepository()
     private val _memberRegistrations = MutableLiveData<List<MemberRegistrationModel>>()
     val memberRegistrations: LiveData<List<MemberRegistrationModel>> = _memberRegistrations

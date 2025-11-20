@@ -98,46 +98,6 @@ fun HomeScreen(paddingValues: PaddingValues,navigator: NavController) {
                     searchQuery = it
                 }
             )
-            // Search
-//            OutlinedTextField(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(horizontal = 16.dp, vertical = 0.dp),
-//                value = searchQuery,
-//                colors = OutlinedTextFieldDefaults.colors(
-//                    focusedContainerColor = Color.White,
-//                    unfocusedContainerColor = Color.White,
-//                    disabledContainerColor = Color.White,
-//                ),
-//                onValueChange = { searchQuery = it },
-//                placeholder = {
-//                    Text(
-//                        text = "Search by name, email, phone...",
-//                        maxLines = 1,
-//                        overflow = TextOverflow.Ellipsis,
-//                        style = MaterialTheme.typography.bodyLarge.copy(
-//                            color = Color.Gray,
-//                        )
-//                    )
-//                },
-//
-//                prefix = {
-//                    Icon(
-//                        imageVector = Icons.Default.Search,
-//                        tint = Color.Gray,
-//                        contentDescription = null,
-//                        modifier = Modifier
-//                            .padding(end = 5.dp)
-//                            .size(20.dp)
-//                    )
-//                },
-//                textStyle = LocalTextStyle.current.copy(
-//                    fontSize = 13.sp
-//                ),
-//                singleLine = true,
-//                shape = RoundedCornerShape(10.dp),
-//            )
-
             // Filter chips
             FilterRowSection(
                 selectedFilter = selectedFilter,

@@ -4,20 +4,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 
-// Brand Tonal System — fully synced
-val primary = Color(0xFF122133)      // Base (your brand)
-val primaryDark = Color(0xFF0D1826)  // Darker tone
-val primaryLight = Color(0xFF7FBBFF) // Lighter tone
+val primary = Color(0xFF122133)
+val primaryDark = Color(0xFF0D1826)
+val primaryLight = Color(0xFF7FBBFF)
 
-val secondary = Color(0xFFFFB300)     // Base Gold
-val secondaryDark = Color(0xFFC68400) // Deep Gold
-val secondaryLight = Color(0xFFFFD65C) // Soft Gold
-
+val secondary = Color(0xFFFFB300)
+val secondaryDark = Color(0xFFC68400)
+val secondaryLight = Color(0xFFFFD65C)
 val error = Color(0xFFB00020)
-val success = Color(0xFF2E7D32)
-val warning = Color(0xFFFFA000)
 
-// Neutral scale
 val Neutral0 = Color(0xFFFFFFFF)
 val Neutral10 = Color(0xFFF5F7FA)
 val Neutral20 = Color(0xFFE6E9EE)

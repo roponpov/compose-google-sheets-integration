@@ -47,6 +47,12 @@ fun FilterRowSection(
                     selectedContainerColor = MaterialTheme.colorScheme.primary,
                     selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
                 ),
+                border = FilterChipDefaults.filterChipBorder(
+                    enabled = true,
+                    selected = filter == selectedFilter,
+                    borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                    borderWidth = 1.dp,
+                ),
                 label = { Text(filter.label) },
                 modifier = Modifier.padding(end = 8.dp)
             )

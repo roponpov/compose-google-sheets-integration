@@ -3,7 +3,6 @@ package kh.roponpov.compose_google_sheets_integration.view.add_member
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,12 +16,18 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,25 +38,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun AppTextField(
+    modifier: Modifier = Modifier,
     label: String,
     value: String,
+    readOnly: Boolean = false,
     placeholder: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
-    val focusManager = LocalFocusManager.current
     var isFocused by rememberSaveable { mutableStateOf(false) }
 
     val placeholderStyle = MaterialTheme.typography.bodySmall.copy(
@@ -78,6 +84,7 @@ fun AppTextField(
             value = value,
             onValueChange = onValueChange,
             singleLine = true,
+            readOnly = readOnly,
             textStyle = textStyle,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
@@ -116,6 +123,96 @@ fun AppTextField(
     }
 }
 
+fun Long.toDateString(
+    pattern: String = "dd/MM/yyyy",
+    locale: Locale = Locale.getDefault()
+): String {
+    val sdf = SimpleDateFormat(pattern, locale)
+    return sdf.format(Date(this))
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppDateTextField(
+    label: String,
+    value: String,
+    placeholder: String,
+    onDobChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var showPicker by remember { mutableStateOf(false) }
+
+    if (showPicker) {
+        val state = rememberDatePickerState()
+
+        DatePickerDialog(
+            onDismissRequest = { showPicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        state.selectedDateMillis?.let {
+                            onDobChange(it.toDateString())
+                        }
+                        showPicker = false
+                    }
+                ) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showPicker = false }) {
+                    Text("Cancel")
+                }
+            }
+        ) {
+            DatePicker(state = state)
+        }
+    }
+
+    Column(modifier = modifier) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium.copy(
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.W600
+            )
+        )
+        Spacer(Modifier.height(4.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(45.dp)
+                .background(Color.White, RoundedCornerShape(10.dp))
+                .border(
+                    width = 1.dp,
+                    Color.Gray.copy(alpha = 0.4f),
+                    shape = RoundedCornerShape(10.dp)
+                )
+                .clickable {
+                    showPicker = true
+                }
+                .padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Text(
+                text = value.ifEmpty { placeholder },
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontSize = 13.sp,
+                    color = if (value.isEmpty()) Color.Gray else MaterialTheme.colorScheme.secondary
+                ),
+                modifier = Modifier.weight(1f)
+            )
+
+            Icon(
+                imageVector = Icons.Default.DateRange,
+                contentDescription = "Select date",
+                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+            )
+        }
+    }
+}
+
 @Composable
 fun AppTextArea(
     label: String,
@@ -124,7 +221,6 @@ fun AppTextArea(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val focusManager = LocalFocusManager.current
     var isFocused by rememberSaveable { mutableStateOf(false) }
 
     val placeholderStyle = MaterialTheme.typography.bodySmall.copy(
@@ -141,7 +237,7 @@ fun AppTextArea(
         Text(
             text = label,
             style = MaterialTheme.typography.bodyMedium.copy(
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.W600
             )
         )
@@ -190,12 +286,11 @@ fun AppTextArea(
 
 @Composable
 fun AppDropdownField(
+    modifier: Modifier = Modifier,
     label: String,
     value: String,
     valueStyle: TextStyle = MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp),
     expanded: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         Text(
@@ -234,7 +329,7 @@ fun AppDropdownField(
             Icon(
                 imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                 contentDescription = null,
-                tint = Color.Gray
+                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
             )
         }
     }
