@@ -16,6 +16,7 @@ enum class DegreeType(val text: String) {
     HIGH_SCHOOL("High School"),
     MASTER("Master"),
     ASSOCIATE("Associate"),
+    UNKNOWN("Unknown")
 }
 
 data class MemberRegistrationModel(
