@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kh.roponpov.compose_google_sheets_integration.models.GoogleAuthManager
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
 import kh.roponpov.compose_google_sheets_integration.repositories.MemberRegistrationRepository
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +19,21 @@ class MemberRegistrationViewModel : ViewModel() {
 
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
+
+    private val _isSubmitting = MutableLiveData(false)
+    val isSubmitting: LiveData<Boolean> = _isSubmitting
+
+    sealed class SubmitResult {
+        data object Success : SubmitResult()
+        data class Error(val message: String) : SubmitResult()
+    }
+
+    private val _submitResult = MutableLiveData<SubmitResult?>(null)
+    val submitResult: LiveData<SubmitResult?> = _submitResult
+
+    fun clearSubmitResult() {
+        _submitResult.value = null
+    }
 
     fun getMemberRegistration() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -35,18 +51,31 @@ class MemberRegistrationViewModel : ViewModel() {
         }
     }
 
-    fun addMember(member: MemberRegistrationModel) {
+    // 🔥 Call this from AddMemberScreen when user taps Submit
+    fun submitMember(member: MemberRegistrationModel, accessToken: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val ok = memberRegistrationRepository.addMember(member)
-            if (ok) {
-                // reload from sheet or optimistically append to LiveData
-                val current = _memberRegistrations.value.orEmpty()
-                val updated = current + member
+            try {
+                withContext(Dispatchers.Main) { _isSubmitting.value = true }
+
+                val success = memberRegistrationRepository.insertMemberRegistration(
+                    member = member,
+                    accessToken = accessToken
+                )
+
                 withContext(Dispatchers.Main) {
-                    _memberRegistrations.value = updated
+                    _submitResult.value = if (success) {
+                        SubmitResult.Success
+                    } else {
+                        SubmitResult.Error("Failed to submit registration. Please try again.")
+                    }
                 }
-            } else {
-                // handle error (toast/snackbar)
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    _submitResult.value =
+                        SubmitResult.Error(e.message ?: "Unexpected error occurred.")
+                }
+            } finally {
+                withContext(Dispatchers.Main) { _isSubmitting.value = false }
             }
         }
     }

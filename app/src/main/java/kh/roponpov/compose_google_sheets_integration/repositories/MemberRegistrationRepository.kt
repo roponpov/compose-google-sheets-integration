@@ -5,21 +5,22 @@ import kh.roponpov.compose_google_sheets_integration.models.DegreeType
 import kh.roponpov.compose_google_sheets_integration.models.GenderType
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
 import kh.roponpov.compose_google_sheets_integration.models.PaymentStatus
-import kh.roponpov.compose_google_sheets_integration.models.SheetAppendRequestModel
+import kh.roponpov.compose_google_sheets_integration.models.ValueRangeModel
 import kh.roponpov.compose_google_sheets_integration.network.RetrofitClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class MemberRegistrationRepository {
 
-    val range: String = "B11:N15"
+    private val readRange = "B6:N100"
+    private val appendRange = "B:N"
 
     suspend fun fetchMemberRegistration(): List<MemberRegistrationModel> {
         return withContext(Dispatchers.IO) {
             try {
                 val response = RetrofitClient.sheetsApi.getSheetValues(
                     sheetId = CredentialKeys.SHEET_ID,
-                    range = range,
+                    range = readRange,
                     apiKey = CredentialKeys.GOOGLE_SHEETS_API_KEY
                 )
 
@@ -54,10 +55,21 @@ class MemberRegistrationRepository {
         }
     }
 
-    suspend fun addMember(member: MemberRegistrationModel): Boolean = withContext(Dispatchers.IO) {
+    suspend fun insertMemberRegistration(
+        member: MemberRegistrationModel,
+        accessToken: String
+    ): Boolean = withContext(Dispatchers.IO) {
         try {
+            val response = RetrofitClient.sheetsApi.getSheetValues(
+                sheetId = CredentialKeys.SHEET_ID,
+                range = readRange,
+                apiKey = CredentialKeys.GOOGLE_SHEETS_API_KEY
+            )
+            val values = response.values ?: emptyList()
+            val id = getNextId(values)
+
             val row = listOf(
-                member.id.toString(),
+                id.toString(),
                 member.latinName,
                 member.khmerName,
                 member.gender.text,
@@ -68,23 +80,31 @@ class MemberRegistrationRepository {
                 member.dob,
                 member.registrationDate,
                 member.degree.text,
-                if (member.joinGroup) "Yes" else "No",
+                if (member.joinGroup) "Y" else "N",
                 member.remark
             )
 
-            val body = SheetAppendRequestModel(values = listOf(row))
+            val body = ValueRangeModel(values = listOf(row))
 
-            val response = RetrofitClient.sheetsApi.appendRow(
+            RetrofitClient.sheetsApi.appendValues(
                 sheetId = CredentialKeys.SHEET_ID,
-                range = "B1:N",
-                apiKey = CredentialKeys.GOOGLE_SHEETS_API_KEY,
-                body = body
+                range = appendRange,
+                valueInputOption = "USER_ENTERED",
+                body = body,
+                authHeader = "Bearer $accessToken"
             )
 
-            response.isSuccessful
+            true
         } catch (e: Exception) {
+            e.printStackTrace()
             false
         }
+    }
+
+    private fun getNextId(values: List<List<String>>): Int {
+        val lastRow = values.lastOrNull() ?: return 1
+        val lastId = lastRow.getOrNull(0)?.toIntOrNull() ?: return 1
+        return lastId + 1
     }
 
     private fun genderFromSheet(text: String): GenderType {

@@ -34,9 +34,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -60,6 +60,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kh.roponpov.compose_google_sheets_integration.models.DegreeType
 import kh.roponpov.compose_google_sheets_integration.models.GenderType
+import kh.roponpov.compose_google_sheets_integration.models.GoogleAuthManager
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
 import kh.roponpov.compose_google_sheets_integration.models.PaymentStatus
 import kh.roponpov.compose_google_sheets_integration.viewmodel.MemberRegistrationViewModel
@@ -117,9 +118,10 @@ fun AddMemberScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
+            navigator = navigator,
             onSubmit = { member ->
                 println(member)
-                memberRegistrationViewModel.addMember(member)
+                memberRegistrationViewModel.submitMember(member,GoogleAuthManager.accessToken ?: "")
             }
         )
     }
@@ -129,6 +131,7 @@ fun AddMemberScreen(
 @Composable
 private fun AddMemberForm(
     modifier: Modifier = Modifier,
+    navigator: NavController,
     onSubmit: (MemberRegistrationModel) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
@@ -151,6 +154,12 @@ private fun AddMemberForm(
     var genderExpanded by rememberSaveable { mutableStateOf(false) }
     var paymentExpanded by rememberSaveable { mutableStateOf(false) }
     var degreeExpanded by rememberSaveable { mutableStateOf(false) }
+
+    // dialogs state
+    val memberRegistrationViewModel: MemberRegistrationViewModel = viewModel()
+    val isSubmitting by memberRegistrationViewModel.isSubmitting.observeAsState(false)
+    val submitResult by memberRegistrationViewModel.submitResult.observeAsState()
+
 
     Column (
         modifier = Modifier
@@ -413,7 +422,7 @@ private fun AddMemberForm(
                     )
                     onSubmit(member)
                     focusManager.clearFocus()
-                }
+                },
         ) {
             Text(
                 "Submit",
@@ -423,6 +432,24 @@ private fun AddMemberForm(
                 )
             )
         }
+
+        if (isSubmitting) {
+            LoadingDialog()
+        }
+
+        submitResult?.let { result ->
+            SubmitResultDialog(
+                result = result,
+                onDismiss = {
+                    memberRegistrationViewModel.clearSubmitResult()
+                },
+                onSuccessNavigateBack = {
+                    memberRegistrationViewModel.clearSubmitResult()
+                    navigator.popBackStack()
+                }
+            )
+        }
+
     }
 }
 

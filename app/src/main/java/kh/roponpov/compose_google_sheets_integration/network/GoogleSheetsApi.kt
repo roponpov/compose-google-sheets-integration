@@ -1,9 +1,11 @@
 package kh.roponpov.compose_google_sheets_integration.network
 
+import kh.roponpov.compose_google_sheets_integration.models.AppendResponse
 import kh.roponpov.compose_google_sheets_integration.models.GoogleSheetResponseModel
-import kh.roponpov.compose_google_sheets_integration.models.SheetAppendRequestModel
+import kh.roponpov.compose_google_sheets_integration.models.ValueRangeModel
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -17,13 +19,12 @@ interface GoogleSheetsApi {
     ): GoogleSheetResponseModel
 
     @POST("v4/spreadsheets/{sheetId}/values/{range}:append")
-    suspend fun appendRow(
+    suspend fun appendValues(
         @Path("sheetId") sheetId: String,
         @Path("range") range: String,
         @Query("valueInputOption") valueInputOption: String = "USER_ENTERED",
-        @Query("insertDataOption") insertDataOption: String = "INSERT_ROWS",
-        @Query("key") apiKey: String,
-        @Body body: SheetAppendRequestModel
-    ): retrofit2.Response<Unit>
+        @Body body: ValueRangeModel,
+        @Header("Authorization") authHeader: String
+    ): AppendResponse
 }
 

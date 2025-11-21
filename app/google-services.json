@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "570168458826",
+    "project_id": "sheet-sync-80de4",
+    "storage_bucket": "sheet-sync-80de4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:570168458826:android:63669be8911d551df430b3",
+        "android_client_info": {
+          "package_name": "kh.roponpov.compose_google_sheets_integration"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUiv4UPdEHqjz9RTXRhgy_GOJQqMmVH3A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
