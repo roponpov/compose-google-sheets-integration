@@ -34,6 +34,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +54,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -60,12 +62,14 @@ import kh.roponpov.compose_google_sheets_integration.models.DegreeType
 import kh.roponpov.compose_google_sheets_integration.models.GenderType
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
 import kh.roponpov.compose_google_sheets_integration.models.PaymentStatus
+import kh.roponpov.compose_google_sheets_integration.viewmodel.MemberRegistrationViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddMemberScreen(
     navigator: NavController,
 ) {
+    val memberRegistrationViewModel: MemberRegistrationViewModel = viewModel()
     val systemUiController = rememberSystemUiController()
     val primaryColor = MaterialTheme.colorScheme.primary
     val darkIcons = primaryColor.luminance() > 0.5f
@@ -115,6 +119,7 @@ fun AddMemberScreen(
                 .fillMaxSize(),
             onSubmit = { member ->
                 println(member)
+                memberRegistrationViewModel.addMember(member)
             }
         )
     }
@@ -201,7 +206,7 @@ private fun AddMemberForm(
                     value = gender?.text ?: "Select gender",
                     valueStyle = MaterialTheme.typography.bodySmall.copy(
                         fontSize = 13.sp,
-                        color = if (gender == null) Color.Gray else MaterialTheme.colorScheme.secondary
+                        color = if (gender == null) Color.Gray else MaterialTheme.colorScheme.onSecondary
                     ),
                     expanded = genderExpanded,
                     modifier = Modifier
@@ -271,7 +276,7 @@ private fun AddMemberForm(
                     value = paymentStatus?.text ?: "Select payment status",
                     valueStyle = MaterialTheme.typography.bodySmall.copy(
                         fontSize = 13.sp,
-                        color = if (paymentStatus == null) Color.Gray else MaterialTheme.colorScheme.secondary
+                        color = if (paymentStatus == null) Color.Gray else MaterialTheme.colorScheme.onSecondary
                     ),
                     expanded = paymentExpanded,
                 )
@@ -340,7 +345,7 @@ private fun AddMemberForm(
                     value = degree?.text ?: "Select degree",
                     valueStyle = MaterialTheme.typography.bodySmall.copy(
                         fontSize = 13.sp,
-                        color = if (degree == null) Color.Gray else MaterialTheme.colorScheme.secondary
+                        color = if (degree == null) Color.Gray else MaterialTheme.colorScheme.onSecondary
                     ),
                     expanded = degreeExpanded,
                 )

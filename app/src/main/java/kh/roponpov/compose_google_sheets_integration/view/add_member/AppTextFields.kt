@@ -199,7 +199,7 @@ fun AppDateTextField(
                 text = value.ifEmpty { placeholder },
                 style = MaterialTheme.typography.bodySmall.copy(
                     fontSize = 13.sp,
-                    color = if (value.isEmpty()) Color.Gray else MaterialTheme.colorScheme.secondary
+                    color = if (value.isEmpty()) Color.Gray else MaterialTheme.colorScheme.onSecondary
                 ),
                 modifier = Modifier.weight(1f)
             )

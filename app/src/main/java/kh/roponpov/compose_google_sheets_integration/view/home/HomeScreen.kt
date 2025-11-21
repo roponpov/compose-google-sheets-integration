@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -47,7 +48,10 @@ fun HomeScreen(paddingValues: PaddingValues,navigator: NavController) {
     var searchQuery by remember { mutableStateOf("") }
     var selectedFilter by remember { mutableStateOf(MemberFilter.All) }
     val memberRegistrationViewModel: MemberRegistrationViewModel = viewModel()
-    memberRegistrationViewModel.getMemberRegistration()
+
+    LaunchedEffect(Unit) {
+        memberRegistrationViewModel.getMemberRegistration()
+    }
 
     SideEffect {
         systemUiController.setStatusBarColor(
@@ -59,6 +63,10 @@ fun HomeScreen(paddingValues: PaddingValues,navigator: NavController) {
     val members by memberRegistrationViewModel
         .memberRegistrations
         .observeAsState(emptyList())
+
+    val isLoading by memberRegistrationViewModel
+        .isLoading
+        .observeAsState(initial = true)
 
     val filtered = members
         .filter { it.matchesSearch(searchQuery) }
@@ -91,7 +99,6 @@ fun HomeScreen(paddingValues: PaddingValues,navigator: NavController) {
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-
             SearchSection(
                 value = searchQuery,
                 onValueChange = {
@@ -105,23 +112,24 @@ fun HomeScreen(paddingValues: PaddingValues,navigator: NavController) {
             )
 
             // List
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 10.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(filtered, key = { it.id }) { member ->
-                    MemberCard(
-                        member = member,
-                    )
+            if (isLoading && members.isEmpty()) {
+                MemberListShimmer()
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    items(filtered, key = { it.id }) { member ->
+                        MemberCard(
+                            member = member,
+                        )
+                    }
                 }
             }
         }
     }
 }
-
-
-
 
 @Composable
 @Preview(
