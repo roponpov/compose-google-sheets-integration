@@ -14,9 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kh.roponpov.compose_google_sheets_integration.viewmodel.UserViewModel
+import androidx.compose.runtime.collectAsState
 
 @Composable
-fun TopBarSection(totalMember: Int) {
+fun TopBarSection(totalMember: Int,userViewModel: UserViewModel) {
+
     Row (
         modifier = Modifier
             .windowInsetsPadding(WindowInsets.statusBars)
@@ -34,8 +38,10 @@ fun TopBarSection(totalMember: Int) {
             )
         }
 
+        println("userViewModel.user.value?.photoUrl : ${userViewModel.user.collectAsState().value?.photoUrl}")
+
         AnimatedProfileRing(
-            imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNRRPTo_P2i0IKquqdmkZ-3KJbRw2GKHUn2w&s",
+            imageUrl = userViewModel.user.value?.photoUrl ?:null,
             size = 40.dp,
             ringWidth = 1.dp
         )

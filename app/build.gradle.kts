@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -9,6 +11,16 @@ android {
     compileSdk = 35
 
     defaultConfig {
+
+        val localProps = Properties().apply {
+            val file = File(rootDir, "local.properties")
+            if (file.exists()) {
+                file.inputStream().use { load(it) }
+            }
+        }
+
+        val clientId = localProps.getProperty("CLIENT_ID") ?: ""
+
         applicationId = "kh.roponpov.compose_google_sheets_integration"
         minSdk = 24
         targetSdk = 35
@@ -16,6 +28,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField(
+            "String",
+            "CLIENT_ID",
+            "\"$clientId\""
+        )
     }
 
     buildTypes {
@@ -35,6 +53,7 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 }

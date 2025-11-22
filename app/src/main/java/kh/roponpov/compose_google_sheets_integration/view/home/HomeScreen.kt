@@ -37,9 +37,10 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kh.roponpov.compose_google_sheets_integration.ui.theme.ComposeGoogleSheetsIntegrationTheme
 import kh.roponpov.compose_google_sheets_integration.viewmodel.MemberRegistrationViewModel
+import kh.roponpov.compose_google_sheets_integration.viewmodel.UserViewModel
 
 @Composable
-fun HomeScreen(paddingValues: PaddingValues,navigator: NavController) {
+fun HomeScreen(paddingValues: PaddingValues,navigator: NavController,userViewModel: UserViewModel) {
 
     val systemUiController = rememberSystemUiController()
     val primaryColor = Color(0xFFF5F5F5)
@@ -76,7 +77,7 @@ fun HomeScreen(paddingValues: PaddingValues,navigator: NavController) {
         modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
         containerColor = Color(0xFFF5F5F5),
         topBar = {
-            TopBarSection(members.size)
+            TopBarSection(members.size,userViewModel)
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -141,7 +142,7 @@ fun PreviewMyJetpack(){
     ComposeGoogleSheetsIntegrationTheme {
         ComposeGoogleSheetsIntegrationTheme {
             Scaffold { padding ->
-                HomeScreen(padding, rememberNavController())
+                HomeScreen(padding, rememberNavController(),viewModel())
             }
         }
     }

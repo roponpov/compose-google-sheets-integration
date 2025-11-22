@@ -8,6 +8,7 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.material3.Scaffold
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -16,6 +17,7 @@ import kh.roponpov.compose_google_sheets_integration.ui.theme.ComposeGoogleSheet
 import kh.roponpov.compose_google_sheets_integration.view.add_member.AddMemberScreen
 import kh.roponpov.compose_google_sheets_integration.view.home.HomeScreen
 import kh.roponpov.compose_google_sheets_integration.view.login.GoogleLoginScreen
+import kh.roponpov.compose_google_sheets_integration.viewmodel.UserViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,6 +26,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ComposeGoogleSheetsIntegrationTheme {
                 val navController = rememberNavController()
+                val userViewMode: UserViewModel = viewModel()
 
                 Scaffold { padding ->
                     NavHost(
@@ -31,15 +34,17 @@ class MainActivity : ComponentActivity() {
                         startDestination = "login",
                     ) {
                         composable("login") {
-                            GoogleLoginScreen(onLoginSuccess = { token ->
-                                GoogleAuthManager.accessToken = token
-                                navController.navigate("home") {
-                                    popUpTo("login") { inclusive = true }
-                                }
-                            })
+                            GoogleLoginScreen(
+                                userViewModel = userViewMode,
+                                onLoginSuccess = { token ->
+                                    GoogleAuthManager.accessToken = token
+                                    navController.navigate("home") {
+                                        popUpTo("login") { inclusive = true }
+                                    }
+                                })
                         }
 
-                        composable("home") { HomeScreen(padding, navController) }
+                        composable("home") { HomeScreen(padding, navController, userViewMode) }
                         composable("add_member") { AddMemberScreen(navController) }
                     }
                 }

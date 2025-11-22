@@ -45,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import kh.roponpov.compose_google_sheets_integration.R
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
@@ -438,7 +439,7 @@ fun PreviewMyJetpacks(){
     ComposeGoogleSheetsIntegrationTheme {
         ComposeGoogleSheetsIntegrationTheme {
             Scaffold { padding ->
-                HomeScreen(padding, rememberNavController())
+                HomeScreen(padding, rememberNavController(), viewModel())
             }
         }
     }
