@@ -20,6 +20,7 @@ enum class DegreeType(val text: String) {
 }
 
 data class MemberRegistrationModel(
+    val indexRange: Int? = null,
     val id: Int,
     val latinName: String,
     val khmerName: String,

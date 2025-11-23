@@ -15,9 +15,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -30,6 +33,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,6 +60,8 @@ import kh.roponpov.compose_google_sheets_integration.ui.theme.ComposeGoogleSheet
 fun MemberCard(
     member: MemberRegistrationModel,
     modifier: Modifier = Modifier,
+    onEdit: (MemberRegistrationModel) -> Unit = {},
+    onDelete: (MemberRegistrationModel) -> Unit = {},
     onClick: () -> Unit = {}
 ) {
     var isExpanded by remember { mutableStateOf(false) }
@@ -215,7 +221,7 @@ fun MemberCard(
                             Text(
                                 text = if (member.paymentStatus == PaymentStatus.PAID) "Paid" else "Unpaid",
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                color = if (member.joinGroup)
+                                color = if (member.paymentStatus == PaymentStatus.PAID)
                                     Color(0xFF2E7D32)
                                 else
                                     MaterialTheme.colorScheme.error
@@ -260,6 +266,51 @@ fun MemberCard(
                     address = member.address
                 )
                 RemarkSection(remark = member.remark)
+
+                // ===== ACTION BUTTONS: EDIT / DELETE =====
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextButton(
+                        onClick = { onEdit(member) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit",
+                            modifier = Modifier.size(16.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            "Edit",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
+                    Spacer(Modifier.width(4.dp))
+
+                    TextButton(
+                        onClick = { onDelete(member) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete",
+                            modifier = Modifier.size(16.dp),
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            "Delete",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             }
         }
     }
@@ -439,7 +490,7 @@ fun PreviewMyJetpacks(){
     ComposeGoogleSheetsIntegrationTheme {
         ComposeGoogleSheetsIntegrationTheme {
             Scaffold { padding ->
-                HomeScreen(padding, rememberNavController(), viewModel())
+                HomeScreen(padding, rememberNavController(), viewModel(),viewModel())
             }
         }
     }

@@ -7,6 +7,7 @@ import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationMo
 import kh.roponpov.compose_google_sheets_integration.models.PaymentStatus
 import kh.roponpov.compose_google_sheets_integration.models.ValueRangeModel
 import kh.roponpov.compose_google_sheets_integration.network.RetrofitClient
+import kh.roponpov.compose_google_sheets_integration.network.RetrofitClient.sheetsApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -25,12 +26,16 @@ class MemberRegistrationRepository {
                 )
 
                 val values = response.values ?: emptyList()
+                val startRow = 6
 
-                values.mapNotNull { row ->
-                    if (row.size < 13) return@mapNotNull null
+                values.mapIndexedNotNull { index, row ->
+                    val rowIndex = startRow + index
+
+//                    if (row.size < 13) return@mapNotNull null
 
                     try {
                         MemberRegistrationModel(
+                            indexRange = rowIndex,
                             id = row[0].toIntOrNull() ?: 0,
                             latinName = row[1],
                             khmerName = row[2],
@@ -101,6 +106,50 @@ class MemberRegistrationRepository {
         }
     }
 
+    ///
+
+    suspend fun updateMemberRegistration(
+        member: MemberRegistrationModel,
+        accessToken: String
+    ): Boolean {
+        val row = member.indexRange
+            ?: return false  // safety: cannot update if we don’t know row
+
+        // Example: Members!A5:H5
+        val range = "B$row:N$row"
+
+        val values = listOf(
+            listOf(
+                member.id,
+                member.latinName,
+                member.khmerName,
+                member.gender,
+                member.email,
+                member.phone,
+                member.paymentStatus,
+                member.address,
+                member.dob,
+                member.registrationDate,
+                member.degree,
+                member.joinGroup,
+                member.address,
+                member.remark,
+            )
+        )
+
+        val body = ValueRange(values = values)
+
+        val response = sheetsApi.updateValues(
+            auth = "Bearer $accessToken",
+            spreadsheetId = CredentialKeys.SHEET_ID,
+            range = range,
+            valueInputOption = "USER_ENTERED",
+            body = body
+        )
+
+        return (response.updatedRows ?: 0) > 0
+    }
+
     private fun getNextId(values: List<List<String>>): Int {
         val lastRow = values.lastOrNull() ?: return 1
         val lastId = lastRow.getOrNull(0)?.toIntOrNull() ?: return 1
@@ -137,3 +186,7 @@ class MemberRegistrationRepository {
         return text.trim().equals("Y", ignoreCase = true)
     }
 }
+
+data class ValueRange(
+    val values: List<List<Any>>
+)

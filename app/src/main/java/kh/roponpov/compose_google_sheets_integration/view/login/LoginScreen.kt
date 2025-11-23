@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
@@ -50,7 +51,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -140,14 +140,12 @@ fun GoogleLoginScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    // All main content shares same max width for clean alignment
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .widthIn(max = 420.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // ---- Logo + Title ----
                         Image(
                             modifier = Modifier.size(100.dp),
                             painter = painterResource(R.drawable.app_logo),
@@ -175,7 +173,6 @@ fun GoogleLoginScreen(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        // ---- Feature Card ----
                         ElevatedCard(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
@@ -196,7 +193,7 @@ fun GoogleLoginScreen(
                                 )
 
                                 FeatureRow(
-                                    icon = Icons.Default.Lock,
+                                    icon = Icons.Default.Refresh,
                                     title = "Instant sync",
                                     subtitle = "Send data straight into your Google Sheets without exporting files."
                                 )
@@ -217,7 +214,6 @@ fun GoogleLoginScreen(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        // ---- Primary CTA ----
                         GoogleSignInButton(
                             enabled = !isSigningIn,
                             onClick = {

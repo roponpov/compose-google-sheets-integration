@@ -1,4 +1,4 @@
-package kh.roponpov.compose_google_sheets_integration.view.add_member
+package kh.roponpov.compose_google_sheets_integration.view.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import kh.roponpov.compose_google_sheets_integration.viewmodel.MemberRegistrationViewModel
 
 @Composable
@@ -35,7 +36,13 @@ fun SubmitResultDialog(
 ) {
     val isSuccess = result is MemberRegistrationViewModel.SubmitResult.Success
 
-    Dialog(onDismissRequest = onDismiss) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            dismissOnClickOutside = false,
+            dismissOnBackPress = false
+        )
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()

@@ -1,4 +1,4 @@
-package kh.roponpov.compose_google_sheets_integration.view.add_member
+package kh.roponpov.compose_google_sheets_integration.view.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -57,6 +57,8 @@ fun AppTextField(
     onValueChange: (String) -> Unit,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    isError: Boolean = false,
+    errorText: String? = null,
 ) {
     var isFocused by rememberSaveable { mutableStateOf(false) }
 
@@ -98,10 +100,11 @@ fun AppTextField(
                 )
                 .border(
                     width = 1.dp,
-                    color = if (isFocused)
-                        MaterialTheme.colorScheme.primary
-                    else
-                        Color.Gray.copy(alpha = 0.4f),
+                    color = when {
+                        isError -> MaterialTheme.colorScheme.error
+                        isFocused -> MaterialTheme.colorScheme.primary
+                        else -> Color.Gray.copy(alpha = 0.4f)
+                    },
                     shape = RoundedCornerShape(10.dp)
                 )
                 .padding(horizontal = 12.dp, vertical = 8.dp),
@@ -118,8 +121,16 @@ fun AppTextField(
                     }
                     innerTextField()
                 }
-            }
+            },
         )
+        if (errorText != null) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = errorText,
+                color = MaterialTheme.colorScheme.error,
+                fontSize = 12.sp
+            )
+        }
     }
 }
 
@@ -138,7 +149,9 @@ fun AppDateTextField(
     value: String,
     placeholder: String,
     onDobChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isError: Boolean = false,
+    errorText: String? = null,
 ) {
     var showPicker by remember { mutableStateOf(false) }
 
@@ -185,7 +198,10 @@ fun AppDateTextField(
                 .background(Color.White, RoundedCornerShape(10.dp))
                 .border(
                     width = 1.dp,
-                    Color.Gray.copy(alpha = 0.4f),
+                    color = if (isError)
+                        MaterialTheme.colorScheme.error
+                    else
+                        Color.Gray.copy(alpha = 0.4f),
                     shape = RoundedCornerShape(10.dp)
                 )
                 .clickable {
@@ -210,6 +226,14 @@ fun AppDateTextField(
                 tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
             )
         }
+        if (errorText != null) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = errorText,
+                color = MaterialTheme.colorScheme.error,
+                fontSize = 12.sp
+            )
+        }
     }
 }
 
@@ -220,6 +244,8 @@ fun AppTextArea(
     placeholder: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    isError: Boolean = false,
+    errorText: String? = null,
 ) {
     var isFocused by rememberSaveable { mutableStateOf(false) }
 
@@ -258,10 +284,11 @@ fun AppTextArea(
                 )
                 .border(
                     width = 1.dp,
-                    color = if (isFocused)
-                        MaterialTheme.colorScheme.primary
-                    else
-                        Color.Gray.copy(alpha = 0.4f),
+                    color = when {
+                        isError -> MaterialTheme.colorScheme.error
+                        isFocused -> MaterialTheme.colorScheme.primary
+                        else -> Color.Gray.copy(alpha = 0.4f)
+                    },
                     shape = RoundedCornerShape(10.dp)
                 )
                 .padding(horizontal = 12.dp, vertical = 8.dp),
@@ -281,6 +308,14 @@ fun AppTextArea(
                 innerTextField()
             }
         )
+        if (errorText != null) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = errorText,
+                color = MaterialTheme.colorScheme.error,
+                fontSize = 12.sp
+            )
+        }
     }
 }
 
@@ -291,6 +326,8 @@ fun AppDropdownField(
     value: String,
     valueStyle: TextStyle = MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp),
     expanded: Boolean,
+    isError: Boolean = false,
+    errorText: String? = null,
 ) {
     Column(modifier = modifier) {
         Text(
@@ -312,7 +349,10 @@ fun AppDropdownField(
                 )
                 .border(
                     width = 1.dp,
-                    color = Color.Gray.copy(alpha = 0.4f),
+                    color = if (isError)
+                        MaterialTheme.colorScheme.error
+                    else
+                        Color.Gray.copy(alpha = 0.4f),
                     shape = RoundedCornerShape(10.dp)
                 )
                 .padding(horizontal = 12.dp, vertical = 8.dp),
@@ -330,6 +370,15 @@ fun AppDropdownField(
                 imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+            )
+        }
+
+        if (errorText != null) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = errorText,
+                color = MaterialTheme.colorScheme.error,
+                fontSize = 12.sp
             )
         }
     }

@@ -42,7 +42,7 @@ fun MemberListShimmer() {
         state = listState,
         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        overscrollEffect = overscroll,            // <- important
+        overscrollEffect = overscroll,
 
     ) {
         items(6) {

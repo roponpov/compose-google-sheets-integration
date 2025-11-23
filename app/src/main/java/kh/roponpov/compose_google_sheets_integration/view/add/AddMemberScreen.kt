@@ -1,5 +1,6 @@
-package kh.roponpov.compose_google_sheets_integration.view.add_member
+package kh.roponpov.compose_google_sheets_integration.view.add
 
+import android.util.Patterns
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -63,6 +64,13 @@ import kh.roponpov.compose_google_sheets_integration.models.GenderType
 import kh.roponpov.compose_google_sheets_integration.models.GoogleAuthManager
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
 import kh.roponpov.compose_google_sheets_integration.models.PaymentStatus
+import kh.roponpov.compose_google_sheets_integration.view.component.AppDateTextField
+import kh.roponpov.compose_google_sheets_integration.view.component.AppDropdownField
+import kh.roponpov.compose_google_sheets_integration.view.component.AppTextArea
+import kh.roponpov.compose_google_sheets_integration.view.component.AppTextField
+import kh.roponpov.compose_google_sheets_integration.view.component.LoadingDialog
+import kh.roponpov.compose_google_sheets_integration.view.component.SubmitResultDialog
+import kh.roponpov.compose_google_sheets_integration.view.component.toApiDate
 import kh.roponpov.compose_google_sheets_integration.viewmodel.MemberRegistrationViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -150,6 +158,18 @@ private fun AddMemberForm(
     var joinGroup by rememberSaveable { mutableStateOf(false) }
     var remark by rememberSaveable { mutableStateOf("") }
 
+    // === ERROR STATES ===
+    var latinNameError by rememberSaveable { mutableStateOf<String?>(null) }
+    var khmerNameError by rememberSaveable { mutableStateOf<String?>(null) }
+    var genderError by rememberSaveable { mutableStateOf<String?>(null) }
+    var emailError by rememberSaveable { mutableStateOf<String?>(null) }
+    var phoneError by rememberSaveable { mutableStateOf<String?>(null) }
+    var paymentStatusError by rememberSaveable { mutableStateOf<String?>(null) }
+    var addressError by rememberSaveable { mutableStateOf<String?>(null) }
+    var dobError by rememberSaveable { mutableStateOf<String?>(null) }
+    var registrationDateError by rememberSaveable { mutableStateOf<String?>(null) }
+    var degreeError by rememberSaveable { mutableStateOf<String?>(null) }
+
     // DROPDOWN EXPAND STATES
     var genderExpanded by rememberSaveable { mutableStateOf(false) }
     var paymentExpanded by rememberSaveable { mutableStateOf(false) }
@@ -188,7 +208,9 @@ private fun AddMemberForm(
                     .padding(bottom = 12.dp),
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next
-                )
+                ),
+                isError = latinNameError != null,
+                errorText = latinNameError
             )
 
             // KHMER NAME
@@ -202,7 +224,9 @@ private fun AddMemberForm(
                     .padding(bottom = 12.dp),
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next
-                )
+                ),
+                isError = khmerNameError != null,
+                errorText = khmerNameError
             )
 
             // Gender
@@ -221,7 +245,9 @@ private fun AddMemberForm(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 12.dp)
-                        .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                        .menuAnchor(MenuAnchorType.PrimaryNotEditable),
+                    isError = genderError != null,
+                    errorText = genderError
                 )
 
                 ExposedDropdownMenu(
@@ -253,7 +279,9 @@ private fun AddMemberForm(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next
-                )
+                ),
+                isError = emailError != null,
+                errorText = emailError
             )
 
             // Phone
@@ -261,14 +289,18 @@ private fun AddMemberForm(
                 label = "Phone",
                 value = phone,
                 placeholder = "Enter your phone number",
-                onValueChange = { phone = it },
+                onValueChange = { newValue ->
+                    phone = newValue.filter { it.isDigit() }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 12.dp),
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Phone,
+                    keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Next
-                )
+                ),
+                isError = phoneError != null,
+                errorText = phoneError
             )
 
             // Payment Status
@@ -288,6 +320,8 @@ private fun AddMemberForm(
                         color = if (paymentStatus == null) Color.Gray else MaterialTheme.colorScheme.onSecondary
                     ),
                     expanded = paymentExpanded,
+                    isError = paymentStatusError != null,
+                    errorText = paymentStatusError
                 )
 
                 ExposedDropdownMenu(
@@ -316,6 +350,8 @@ private fun AddMemberForm(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 12.dp),
+                isError = addressError != null,
+                errorText = addressError
             )
 
             // Date of Birth
@@ -326,7 +362,9 @@ private fun AddMemberForm(
                 onDobChange = { dob = it },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 12.dp)
+                    .padding(bottom = 12.dp),
+                isError = dobError != null,
+                errorText = dobError
             )
 
             // Registration Date
@@ -337,7 +375,9 @@ private fun AddMemberForm(
                 onDobChange = { registrationDate = it },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 12.dp)
+                    .padding(bottom = 12.dp),
+                isError = registrationDateError != null,
+                errorText = registrationDateError
             )
 
             // Degree
@@ -357,6 +397,8 @@ private fun AddMemberForm(
                         color = if (degree == null) Color.Gray else MaterialTheme.colorScheme.onSecondary
                     ),
                     expanded = degreeExpanded,
+                    isError = degreeError != null,
+                    errorText = degreeError
                 )
 
                 ExposedDropdownMenu(
@@ -405,6 +447,55 @@ private fun AddMemberForm(
                     shape = RoundedCornerShape(12.dp)
                 )
                 .clickable {
+                    val phoneRegex = Regex("^0[0-9]{7,9}$")
+
+                    // === VALIDATION ===
+                    latinNameError = if (latinName.isBlank()) "Latin name is required" else null
+                    khmerNameError = if (khmerName.isBlank()) "Khmer name is required" else null
+                    genderError = if (gender == null) "Please select gender" else null
+
+                    emailError = when {
+                        email.isBlank() -> "Email is required"
+                        !Patterns.EMAIL_ADDRESS.matcher(email).matches() ->
+                        "The email format is incorrect (example: user@gmail.com)"
+                        else -> null
+                    }
+
+                    phoneError = when {
+                        phone.isBlank() ->
+                            "Please enter your phone number"
+                        !phone.all { it.isDigit() } ->
+                            "Phone number must contain digits only"
+                        phone.length !in 9..10 ->
+                            "Phone number must be 9 to 10 digits"
+                        !phoneRegex.matches(phone) ->
+                            "Invalid phone number format. Example: 098765432"
+                        else -> null
+                    }
+
+                    paymentStatusError = if (paymentStatus == null) "Please select payment status" else null
+                    addressError = if (address.isBlank()) "Address is required" else null
+                    dobError = if (dob.isBlank()) "Date of birth is required" else null
+                    registrationDateError = if (registrationDate.isBlank()) "Registration date is required" else null
+                    degreeError = if (degree == null) "Please select degree" else null
+
+                    val hasError =
+                        latinNameError != null ||
+                        khmerNameError != null ||
+                        genderError != null ||
+                        emailError != null ||
+                        phoneError != null ||
+                        paymentStatusError != null ||
+                        addressError != null ||
+                        dobError != null ||
+                        registrationDateError != null ||
+                        degreeError != null
+
+                    if (hasError) {
+                        focusManager.clearFocus()
+                        return@clickable
+                    }
+
                     val member = MemberRegistrationModel(
                         id = 0,
                         latinName = latinName,
@@ -414,11 +505,11 @@ private fun AddMemberForm(
                         phone = phone,
                         paymentStatus = paymentStatus ?: PaymentStatus.UNPAID,
                         address = address,
-                        dob = dob,
-                        registrationDate = registrationDate,
+                        dob = dob.toApiDate(),
+                        registrationDate = registrationDate.toApiDate(),
                         degree = degree ?: DegreeType.UNKNOWN,
                         joinGroup = joinGroup,
-                        remark = remark
+                        remark = remark.ifEmpty { "—" }
                     )
                     onSubmit(member)
                     focusManager.clearFocus()
