@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Sheet Sync</string>
-    <string name="hello">ជំរាបសួរ</string>
+    <string name="continue_label">បន្ត</string>
+    <string name="change_language">ផ្លាស់ប្ដូរភាសា</string>
+    <string name="language_title">ជ្រើសរើសភាសារបស់អ្នក</string>
+    <string name="language_subtitle">អ្នកអាចផ្លាស់ប្ដូរវាបានពេលក្រោយ។</string>
 </resources>

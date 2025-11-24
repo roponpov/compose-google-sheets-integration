@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
                     Scaffold { padding ->
                         NavHost(
                             navController = navController,
-                            startDestination = "login",
+                            startDestination = "language",
                         ) {
                             composable("language") {
                                 // remember selected language locally in this screen

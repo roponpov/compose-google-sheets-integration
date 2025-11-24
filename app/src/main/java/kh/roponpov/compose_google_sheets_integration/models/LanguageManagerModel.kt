@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import java.util.Locale
-import androidx.core.content.edit
 
 enum class AppLanguage(
     val code: String,
@@ -37,11 +36,14 @@ object LanguageManager {
     }
 
     fun saveLanguage(context: Context, language: AppLanguage) {
-        prefs(context).edit {
-            putString(KEY_LANGUAGE_CODE, language.code)
-        }
+        prefs(context).edit()
+            .putString(KEY_LANGUAGE_CODE, language.code)
+            .apply()
     }
 
+    /**
+     * Apply locale to current Activity and recreate it so all UI uses new language.
+     */
     fun updateAppLocale(activity: Activity, language: AppLanguage) {
         saveLanguage(activity, language)
 
@@ -55,12 +57,12 @@ object LanguageManager {
         @Suppress("DEPRECATION")
         res.updateConfiguration(config, res.displayMetrics)
 
-        // recreate so all Composables use new locale
         activity.recreate()
     }
 
     /**
-     * Used in MainActivity.attachBaseContext to apply saved language early.
+     * Wrap context with the selected locale.
+     * Used in MainActivity.attachBaseContext().
      */
     fun wrapContext(base: Context): Context {
         val language = getSavedLanguage(base)

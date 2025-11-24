@@ -21,8 +21,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kh.roponpov.compose_google_sheets_integration.R
 import kh.roponpov.compose_google_sheets_integration.models.AppLanguage
 
 @Composable
@@ -45,14 +47,14 @@ fun LanguageScreen(
         ) {
             Column {
                 Text(
-                    text = "Choose your language",
+                    text = stringResource(R.string.language_title),
                     style = MaterialTheme.typography.headlineMedium.copy(
                         fontWeight = FontWeight.Bold
                     )
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "You can change this later.",
+                    text = stringResource(R.string.language_subtitle),
                     style = MaterialTheme.typography.bodyMedium
                 )
 
@@ -78,7 +80,7 @@ fun LanguageScreen(
                     .height(52.dp),
                 onClick = onConfirm
             ) {
-                Text(text = "Continue")
+                Text(text = stringResource(R.string.continue_label))
             }
         }
     }
