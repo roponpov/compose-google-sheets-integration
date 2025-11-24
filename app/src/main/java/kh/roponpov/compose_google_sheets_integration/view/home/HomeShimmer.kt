@@ -87,7 +87,6 @@ fun MemberCardShimmer() {
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        // mimic your real MemberCard structure
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
@@ -134,7 +133,6 @@ fun MemberCardShimmer() {
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // gender + phone row
             Row(
                 horizontalArrangement = Arrangement.spacedBy(alignment = Alignment.Start, space = 5.dp),
                 modifier = Modifier.fillMaxWidth()

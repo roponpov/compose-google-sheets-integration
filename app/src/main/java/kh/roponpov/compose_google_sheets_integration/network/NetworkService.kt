@@ -7,7 +7,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-object RetrofitClient {
+object NetworkService {
     private const val BASE_URL = "https://sheets.googleapis.com/"
 
     private val logging = HttpLoggingInterceptor().apply {

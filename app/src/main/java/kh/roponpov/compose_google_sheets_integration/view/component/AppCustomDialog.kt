@@ -29,7 +29,9 @@ import androidx.compose.ui.window.DialogProperties
 import kh.roponpov.compose_google_sheets_integration.viewmodel.MemberRegistrationViewModel
 
 @Composable
-fun SubmitResultDialog(
+fun AppCustomDialog(
+    title: String,
+    description: String,
     result: MemberRegistrationViewModel.SubmitResult,
     onDismiss: () -> Unit,
     onSuccessNavigateBack: () -> Unit,
@@ -82,7 +84,7 @@ fun SubmitResultDialog(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = if (isSuccess) "Member added" else "Something went wrong",
+                    text = if (isSuccess) title else "Something went wrong",
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.SemiBold
                     ),
@@ -95,7 +97,7 @@ fun SubmitResultDialog(
                 Text(
                     text = when (result) {
                         is MemberRegistrationViewModel.SubmitResult.Success ->
-                            "The member has been successfully registered."
+                            description
                         is MemberRegistrationViewModel.SubmitResult.Error ->
                             result.message
                     },

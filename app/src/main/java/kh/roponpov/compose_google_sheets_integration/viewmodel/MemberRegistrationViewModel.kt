@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kh.roponpov.compose_google_sheets_integration.models.GoogleAuthManager
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
 import kh.roponpov.compose_google_sheets_integration.repositories.MemberRegistrationRepository
 import kotlinx.coroutines.Dispatchers
@@ -37,9 +36,15 @@ class MemberRegistrationViewModel : ViewModel() {
     private val _submitResult = MutableLiveData<SubmitResult?>(null)
     val submitResult: LiveData<SubmitResult?> = _submitResult
 
+    private val _deleteResult = MutableLiveData<SubmitResult?>(null)
+    val deleteResult: LiveData<SubmitResult?> = _deleteResult
 
     fun clearSubmitResult() {
         _submitResult.value = null
+    }
+
+    fun clearDeleteResult() {
+        _deleteResult.value = null
     }
 
     fun refreshMembers() {
@@ -58,7 +63,7 @@ class MemberRegistrationViewModel : ViewModel() {
 
             val data = try {
                 memberRegistrationRepository.fetchMemberRegistration()
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 emptyList()
             }
 
@@ -102,7 +107,7 @@ class MemberRegistrationViewModel : ViewModel() {
 
                 val success = memberRegistrationRepository.updateMemberRegistration(
                     member = member,
-                    accessToken = "Bearer $accessToken",
+                    accessToken = accessToken,
                 )
 
                 withContext(Dispatchers.Main) {
@@ -115,6 +120,39 @@ class MemberRegistrationViewModel : ViewModel() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     _submitResult.value =
+                        SubmitResult.Error(e.message ?: "Unexpected error occurred.")
+                }
+            } finally {
+                withContext(Dispatchers.Main) { _isSubmitting.value = false }
+            }
+        }
+    }
+
+    fun deleteMember(member: MemberRegistrationModel, accessToken: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                withContext(Dispatchers.Main) { _isSubmitting.value = true }
+
+                val success = memberRegistrationRepository.deleteMemberRegistration(
+                    member = member,
+                    accessToken = accessToken
+                )
+
+                withContext(Dispatchers.Main) {
+                    _deleteResult.value = if (success) {
+                        SubmitResult.Success
+                    } else {
+                        SubmitResult.Error("Failed to delete member. Please try again.")
+                    }
+                }
+
+                if (success) {
+                    val data = memberRegistrationRepository.fetchMemberRegistration()
+                    _memberRegistrations.postValue(data)
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    _deleteResult.value =
                         SubmitResult.Error(e.message ?: "Unexpected error occurred.")
                 }
             } finally {

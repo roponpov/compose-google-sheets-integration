@@ -1,13 +1,18 @@
 package kh.roponpov.compose_google_sheets_integration.repositories
 
-import kh.roponpov.compose_google_sheets_integration.constant.CredentialKeys
-import kh.roponpov.compose_google_sheets_integration.models.DegreeType
-import kh.roponpov.compose_google_sheets_integration.models.GenderType
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
-import kh.roponpov.compose_google_sheets_integration.models.PaymentStatus
+import kh.roponpov.compose_google_sheets_integration.constant.CredentialKeys
+import kh.roponpov.compose_google_sheets_integration.models.BatchUpdateRequestModel
+import kh.roponpov.compose_google_sheets_integration.models.BatchUpdateResponseModel
 import kh.roponpov.compose_google_sheets_integration.models.ValueRangeModel
-import kh.roponpov.compose_google_sheets_integration.network.RetrofitClient
-import kh.roponpov.compose_google_sheets_integration.network.RetrofitClient.sheetsApi
+import kh.roponpov.compose_google_sheets_integration.network.NetworkService
+import kh.roponpov.compose_google_sheets_integration.models.PaymentStatus
+import kh.roponpov.compose_google_sheets_integration.models.DegreeType
+import kh.roponpov.compose_google_sheets_integration.models.DeleteDimensionRequestModel
+import kh.roponpov.compose_google_sheets_integration.models.DimensionRangeModel
+import kh.roponpov.compose_google_sheets_integration.models.DynamicValueRangeModel
+import kh.roponpov.compose_google_sheets_integration.models.GenderType
+import kh.roponpov.compose_google_sheets_integration.models.RequestModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -15,11 +20,12 @@ class MemberRegistrationRepository {
 
     private val readRange = "B6:N100"
     private val appendRange = "B:N"
+    private val sheetTabId = 0
 
     suspend fun fetchMemberRegistration(): List<MemberRegistrationModel> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = RetrofitClient.sheetsApi.getSheetValues(
+                val response = NetworkService.sheetsApi.getSheetValues(
                     sheetId = CredentialKeys.SHEET_ID,
                     range = readRange,
                     apiKey = CredentialKeys.GOOGLE_SHEETS_API_KEY
@@ -30,9 +36,6 @@ class MemberRegistrationRepository {
 
                 values.mapIndexedNotNull { index, row ->
                     val rowIndex = startRow + index
-
-//                    if (row.size < 13) return@mapNotNull null
-
                     try {
                         MemberRegistrationModel(
                             indexRange = rowIndex,
@@ -65,7 +68,7 @@ class MemberRegistrationRepository {
         accessToken: String
     ): Boolean = withContext(Dispatchers.IO) {
         try {
-            val response = RetrofitClient.sheetsApi.getSheetValues(
+            val response = NetworkService.sheetsApi.getSheetValues(
                 sheetId = CredentialKeys.SHEET_ID,
                 range = readRange,
                 apiKey = CredentialKeys.GOOGLE_SHEETS_API_KEY
@@ -91,14 +94,13 @@ class MemberRegistrationRepository {
 
             val body = ValueRangeModel(values = listOf(row))
 
-            RetrofitClient.sheetsApi.appendValues(
+            NetworkService.sheetsApi.appendValues(
                 sheetId = CredentialKeys.SHEET_ID,
                 range = appendRange,
                 valueInputOption = "USER_ENTERED",
                 body = body,
                 authHeader = "Bearer $accessToken"
             )
-
             true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -106,16 +108,12 @@ class MemberRegistrationRepository {
         }
     }
 
-    ///
-
     suspend fun updateMemberRegistration(
         member: MemberRegistrationModel,
         accessToken: String
     ): Boolean {
-        val row = member.indexRange
-            ?: return false  // safety: cannot update if we don’t know row
+        val row = member.indexRange ?: return false
 
-        // Example: Members!A5:H5
         val range = "B$row:N$row"
 
         val values = listOf(
@@ -123,23 +121,22 @@ class MemberRegistrationRepository {
                 member.id,
                 member.latinName,
                 member.khmerName,
-                member.gender,
+                member.gender.text,
                 member.email,
                 member.phone,
-                member.paymentStatus,
+                member.paymentStatus.text,
                 member.address,
                 member.dob,
                 member.registrationDate,
-                member.degree,
-                member.joinGroup,
-                member.address,
+                member.degree.text,
+                if (member.joinGroup) "Y" else "N",
                 member.remark,
             )
         )
 
-        val body = ValueRange(values = values)
+        val body = DynamicValueRangeModel(values = values)
 
-        val response = sheetsApi.updateValues(
+        val response = NetworkService.sheetsApi.updateValues(
             auth = "Bearer $accessToken",
             spreadsheetId = CredentialKeys.SHEET_ID,
             range = range,
@@ -149,6 +146,49 @@ class MemberRegistrationRepository {
 
         return (response.updatedRows ?: 0) > 0
     }
+
+    suspend fun deleteMemberRegistration(
+        member: MemberRegistrationModel,
+        accessToken: String
+    ): Boolean = withContext(Dispatchers.IO) {
+        val rowIndex = member.indexRange ?: return@withContext false
+
+        // Google Sheet rows are 0-based in DeleteDimension:
+        // row 1 -> index 0, row 2 -> 1, ...
+        val startIndex = rowIndex - 1
+        val endIndex = rowIndex
+
+        val requestBody = BatchUpdateRequestModel(
+            requests = listOf(
+                RequestModel(
+                    deleteDimension = DeleteDimensionRequestModel(
+                        range = DimensionRangeModel(
+                            sheetId = sheetTabId,
+                            dimension = "ROWS",
+                            startIndex = startIndex,
+                            endIndex = endIndex
+                        )
+                    )
+                )
+            )
+        )
+
+        try {
+            val response: BatchUpdateResponseModel =
+                NetworkService.sheetsApi.batchUpdate(
+                    auth = "Bearer $accessToken",
+                    spreadsheetId = CredentialKeys.SHEET_ID,
+                    body = requestBody
+                )
+
+            // if we got a spreadsheetId back, we assume it went fine
+            response.spreadsheetId != null
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
 
     private fun getNextId(values: List<List<String>>): Int {
         val lastRow = values.lastOrNull() ?: return 1
@@ -182,11 +222,6 @@ class MemberRegistrationRepository {
     }
 
     private fun joinGroupFromSheet(text: String): Boolean {
-        // your sheet: "Y" / "N"
         return text.trim().equals("Y", ignoreCase = true)
     }
 }
-
-data class ValueRange(
-    val values: List<List<Any>>
-)

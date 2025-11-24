@@ -1,6 +1,7 @@
 package kh.roponpov.compose_google_sheets_integration.view.component
 
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 fun String.toApiDate(): String {
@@ -13,4 +14,12 @@ fun String.toApiDate(): String {
     } catch (e: Exception) {
         this
     }
+}
+
+fun Long.toDateString(
+    pattern: String = "dd/MM/yyyy",
+    locale: Locale = Locale.getDefault()
+): String {
+    val sdf = SimpleDateFormat(pattern, locale)
+    return sdf.format(Date(this))
 }

@@ -42,7 +42,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kh.roponpov.compose_google_sheets_integration.models.GoogleAuthManagerModel
+import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
 import kh.roponpov.compose_google_sheets_integration.ui.theme.ComposeGoogleSheetsIntegrationTheme
+import kh.roponpov.compose_google_sheets_integration.view.component.AppConfirmDialog
+import kh.roponpov.compose_google_sheets_integration.view.component.AppCustomDialog
+import kh.roponpov.compose_google_sheets_integration.view.component.AppLoadingDialog
 import kh.roponpov.compose_google_sheets_integration.viewmodel.MemberRegistrationViewModel
 import kh.roponpov.compose_google_sheets_integration.viewmodel.UserViewModel
 
@@ -86,6 +91,17 @@ fun HomeScreen(
         .isLoading
         .observeAsState(initial = true)
 
+    val isSubmitting by memberRegistrationViewModel
+        .isSubmitting
+        .observeAsState(initial = false)
+
+    val deleteResult by memberRegistrationViewModel
+        .deleteResult
+        .observeAsState()
+
+    var memberToDelete by remember { mutableStateOf<MemberRegistrationModel?>(null) }
+    var showDeleteConfirm by remember { mutableStateOf(false) }
+
     val filtered = members
         .sortedByDescending { it.id }
         .filter { it.matchesSearch(searchQuery) }
@@ -106,7 +122,7 @@ fun HomeScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navigator.navigate("add_member")
+                    navigator.navigate("add")
                 },
                 shape = CircleShape,
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -169,8 +185,12 @@ fun HomeScreen(
                             MemberCard(
                                 member = member,
                                 onEdit = {
-                                    println(it.id)
                                     navigator.navigate("update/${it.id}")
+                                },
+                                onDelete = { clickedMember ->
+                                    memberToDelete = clickedMember
+                                    showDeleteConfirm = true
+
                                 }
                             )
                         }
@@ -178,21 +198,62 @@ fun HomeScreen(
                 }
             }
         }
-    }
-}
 
-@Composable
-@Preview(
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    showBackground = true,
-    name = "Light Mode"
-)
-fun PreviewMyJetpack(){
-    ComposeGoogleSheetsIntegrationTheme {
-        ComposeGoogleSheetsIntegrationTheme {
-            Scaffold { padding ->
-                HomeScreen(padding, rememberNavController(),viewModel(),viewModel())
-            }
+        // 🔄 Loading dialog when deleting
+        if (isSubmitting) {
+            AppLoadingDialog(
+                loadingText = "Deleting member..."
+            )
         }
+
+        // ❓ Confirmation dialog on delete click
+        if (showDeleteConfirm && memberToDelete != null) {
+            val name = memberToDelete!!.latinName
+
+            AppConfirmDialog(
+                title = "Remove this member?",
+                message = "“$name” will be permanently removed from the list. This action cannot be undone.",
+                highlightedText = name,
+                confirmText = "Delete",
+                cancelText = "Keep",
+                isDestructive = true,
+                onConfirm = {
+                    showDeleteConfirm = false
+                    memberRegistrationViewModel.deleteMember(
+                        accessToken = GoogleAuthManagerModel.accessToken ?: "",
+                        member = memberToDelete!!
+                    )
+                    memberToDelete = null
+                },
+                onCancel = {
+                    showDeleteConfirm = false
+                    memberToDelete = null
+                }
+            )
+        }
+
+
+        // ✅ Success / error dialog after delete
+        deleteResult?.let { result ->
+            AppCustomDialog(
+                title = if (result is MemberRegistrationViewModel.SubmitResult.Success)
+                    "Member deleted"
+                else
+                    "Delete failed",
+                description = if (result is MemberRegistrationViewModel.SubmitResult.Success)
+                    "The member has been deleted successfully."
+                else
+                    "",
+                result = result,
+                onDismiss = {
+                    memberRegistrationViewModel.clearDeleteResult()
+                },
+                onSuccessNavigateBack = {
+                    // We are already in Home, so just close dialog
+                    memberRegistrationViewModel.clearDeleteResult()
+                }
+            )
+        }
+
     }
 }

@@ -19,8 +19,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 
 @Composable
-fun LoadingDialog() {
-    Dialog(onDismissRequest = { /* block dismiss */ }) {
+fun AppLoadingDialog(
+    loadingText: String,
+) {
+    Dialog(onDismissRequest = {  }) {
         Box(
             modifier = Modifier
                 .background(
@@ -41,7 +43,7 @@ fun LoadingDialog() {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Submitting...",
+                    text = loadingText,
                     style = MaterialTheme.typography.bodyMedium.copy(
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Medium

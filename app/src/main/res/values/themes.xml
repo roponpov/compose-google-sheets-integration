@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Composegooglesheetsintegration" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.Composegooglesheetsintegration" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- you can add more items later if needed -->
+    </style>
 </resources>

@@ -479,19 +479,3 @@ private fun RemarkSection(remark: String){
         }
     }
 }
-
-@Composable
-@Preview(
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    showBackground = true,
-    name = "Light Mode"
-)
-fun PreviewMyJetpacks(){
-    ComposeGoogleSheetsIntegrationTheme {
-        ComposeGoogleSheetsIntegrationTheme {
-            Scaffold { padding ->
-                HomeScreen(padding, rememberNavController(), viewModel(),viewModel())
-            }
-        }
-    }
-}
