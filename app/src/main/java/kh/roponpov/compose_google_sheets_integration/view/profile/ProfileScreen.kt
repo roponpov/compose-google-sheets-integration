@@ -1,6 +1,5 @@
 package kh.roponpov.compose_google_sheets_integration.view.profile
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,66 +7,121 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Slider
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kh.roponpov.compose_google_sheets_integration.R
+import kh.roponpov.compose_google_sheets_integration.viewmodel.UserViewModel
 
+private enum class ProfileSheetType {
+    NONE,
+    THEME,
+    FONT_SIZE,
+    LANGUAGE,
+    LOGOUT
+}
+
+enum class ThemeMode {
+    LIGHT,
+    DARK,
+    SYSTEM
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    navigator: NavController
+    navigator: NavController,
+    userViewModel: UserViewModel,
 ) {
-    // Fake states for now – hook them to ViewModel later
-    var isDarkMode by remember { mutableStateOf(false) }
-    var fontScale by remember { mutableStateOf(1.0f) }       // 0.8f..1.4f
+    val systemUiController = rememberSystemUiController()
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val darkIcons = primaryColor.luminance() > 0.5f
+
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = primaryColor,
+            darkIcons = darkIcons
+        )
+    }
+
+    val headerHeight = 300.dp
+    val sheetOverlap = 40.dp
+
+    // Theme + font state (hook this to DataStore later if you want)
+    var themeMode by remember { mutableStateOf(ThemeMode.SYSTEM) }
+    var fontScale by remember { mutableFloatStateOf(1.0f) } // 0.9 / 1.0 / 1.25
+
     val languages = listOf("English", "Khmer", "Chinese")
     var selectedLanguage by remember { mutableStateOf(languages[0]) }
 
     val scrollState = rememberScrollState()
 
+    // Bottom sheet state
+    var currentSheet by remember { mutableStateOf(ProfileSheetType.NONE) }
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var isSheetVisible by remember { mutableStateOf(false) }
+
+    fun openSheet(type: ProfileSheetType) {
+        currentSheet = type
+        isSheetVisible = true
+    }
+
+    fun closeSheet() {
+        isSheetVisible = false
+        currentSheet = ProfileSheetType.NONE
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF081018)) // dark base
+            .background(color = MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
@@ -76,7 +130,7 @@ fun ProfileScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(260.dp)
+                    .height(headerHeight)
                     .background(
                         Brush.verticalGradient(
                             listOf(
@@ -86,13 +140,16 @@ fun ProfileScreen(
                         )
                     )
             ) {
-                // (Optional) background image blur behind
-                Image(
-                    painter = painterResource(id = R.drawable.google_logo_icon),
+                AsyncImage(
+                    model = userViewModel.user.value?.photoUrl ?: "",
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize()
-                        .alpha(0.15f),
+                        .blur(
+                            radiusX = 50.dp,
+                            radiusY = 50.dp,
+                            edgeTreatment = BlurredEdgeTreatment.Unbounded
+                        ),
                     contentScale = ContentScale.Crop
                 )
 
@@ -101,21 +158,22 @@ fun ProfileScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                        .padding(horizontal = 0.dp, vertical = 0.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = { navigator.popBackStack() }) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            modifier = Modifier.size(25.dp),
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = Color.White
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                     Text(
                         text = "Profile Settings",
-                        color = Color.White,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.SemiBold
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Normal
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -125,136 +183,112 @@ fun ProfileScreen(
                 // Center profile
                 Column(
                     modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = 24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .fillMaxSize()
+                        .windowInsetsPadding(WindowInsets.statusBars)
+                        .align(Alignment.Center),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.degree_icon),
+                    AsyncImage(
+                        model = userViewModel.user.value?.photoUrl ?: "",
                         contentDescription = "Profile",
                         modifier = Modifier
-                            .size(112.dp)
+                            .size(100.dp)
                             .clip(CircleShape),
                         contentScale = ContentScale.Crop
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = "Ropon POV",
+                        text = userViewModel.user.value?.name ?: "",
                         color = Color.White,
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.SemiBold
                         )
                     )
-                    Text(
-                        text = "User ID: 979972",
-                        color = Color.White.copy(alpha = 0.85f),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
                 }
             }
-
-            // The rest is handled by the Surface below (overlaps using offset)
         }
 
         // ===== WHITE SHEET WITH SETTINGS =====
         Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .offset(y = 220.dp) // sheet starts overlapping header
+                .offset(y = headerHeight - sheetOverlap)
                 .verticalScroll(scrollState),
             shape = RoundedCornerShape(topStart = 26.dp, topEnd = 26.dp),
-            color = MaterialTheme.colorScheme.surface
+            color = MaterialTheme.colorScheme.background
         ) {
             Column(
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 18.dp)
             ) {
-                // Small drag handle
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .width(42.dp)
-                        .height(4.dp)
-                        .clip(RoundedCornerShape(999.dp))
-                        .background(Color(0xFFE0E0E0))
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
                 // ===== Appearance section =====
-                SectionTitle("Appearance")
+                TitleSection("Appearance")
 
-                SettingRow(
-                    icon = Icons.Default.Lock,
-                    iconTint = Color(0xFFFFC107),
-                    title = "Dark Mode",
-                    subtitle = if (isDarkMode) "Dark mode is on" else "Dark mode is off",
-                    trailing = {
-                        Switch(
-                            checked = isDarkMode,
-                            onCheckedChange = { isDarkMode = it }
-                        )
-                    }
+                // Dark / Light / System -> opens bottom sheet
+                FunctionFeatureSection(
+                    icon = R.drawable.theme_icon,
+                    iconTint = MaterialTheme.colorScheme.primary,
+                    title = "Theme",
+                    subtitle = when (themeMode) {
+                        ThemeMode.DARK -> "Dark"
+                        ThemeMode.LIGHT -> "Light"
+                        ThemeMode.SYSTEM -> "System default"
+                    },
+                    onClick = { openSheet(ProfileSheetType.THEME) }
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                SettingRow(
-                    icon = Icons.Default.Lock,
-                    iconTint = Color(0xFF42A5F5),
+                // Font size (OPEN bottom sheet)
+                FunctionFeatureSection(
+                    icon = R.drawable.font_size_icon,
+                    iconTint = MaterialTheme.colorScheme.primary,
                     title = "Font Size",
-                    subtitle = "Adjust the app text size"
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Slider(
-                            value = fontScale,
-                            onValueChange = { fontScale = it },
-                            valueRange = 0.8f..1.4f
-                        )
+                    subtitle = "Tap to adjust app text size",
+                    onClick = { openSheet(ProfileSheetType.FONT_SIZE) },
+                    trailing = {
                         Text(
-                            text = "Preview text (កម្ពុជា ABC 123)",
-                            fontSize = (14.sp * fontScale),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f)
+                            text = when (fontScale) {
+                                0.9f -> "Small"
+                                1.25f -> "Bigger"
+                                else -> "Normal"
+                            } + " ${(fontScale * 100).toInt()}%",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                         )
                     }
-                }
+                )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // ===== Language section =====
-                SectionTitle("Language")
+                TitleSection("Language")
 
-                SettingRow(
-                    icon = Icons.Default.Lock,
-                    iconTint = Color(0xFF26C6DA),
-                    title = "App Language",
+                FunctionFeatureSection(
+                    icon = R.drawable.language_icon,
+                    iconTint = MaterialTheme.colorScheme.primary,
+                    title = "Language",
                     subtitle = selectedLanguage,
-                    onClick = {
-                        // demo: just cycle languages
-                        val idx = languages.indexOf(selectedLanguage)
-                        selectedLanguage = languages[(idx + 1) % languages.size]
-                    }
+                    onClick = { openSheet(ProfileSheetType.LANGUAGE) }
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // ===== Account section =====
-                SectionTitle("Account")
+                TitleSection("Account")
 
-                // Logout row with danger style
+                // Logout row -> opens bottom sheet
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
                         .clickable {
-                            // TODO hook your real logout
-                            navigator.popBackStack()
+                            openSheet(ProfileSheetType.LOGOUT)
                         },
-                    color = MaterialTheme.colorScheme.errorContainer,
+                    color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.25f),
                     shape = RoundedCornerShape(18.dp),
-                    tonalElevation = 1.dp
+                    tonalElevation = 0.dp
                 ) {
                     Row(
                         modifier = Modifier
@@ -267,13 +301,13 @@ fun ProfileScreen(
                                 modifier = Modifier
                                     .size(38.dp)
                                     .clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.error)
+                                    .background(MaterialTheme.colorScheme.error.copy(alpha = 0.05f))
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Lock,
+                                    painter = painterResource(R.drawable.logout_icon),
                                     contentDescription = "Logout",
-                                    tint = Color.White,
-                                    modifier = Modifier.align(Alignment.Center)
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.padding(8.dp).align(Alignment.Center)
                                 )
                             }
                             Spacer(modifier = Modifier.width(12.dp))
@@ -283,12 +317,12 @@ fun ProfileScreen(
                                     style = MaterialTheme.typography.titleMedium.copy(
                                         fontWeight = FontWeight.SemiBold
                                     ),
-                                    color = MaterialTheme.colorScheme.onErrorContainer
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
                                     text = "Sign out from this device",
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f)
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                                 )
                             }
                         }
@@ -304,91 +338,77 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(40.dp))
             }
         }
-    }
-}
 
-@Composable
-private fun SectionTitle(text: String) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.titleSmall.copy(
-            fontWeight = FontWeight.SemiBold
-        ),
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-}
-
-@Composable
-private fun SettingRow(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    iconTint: Color,
-    title: String,
-    subtitle: String? = null,
-    onClick: (() -> Unit)? = null,
-    trailing: (@Composable () -> Unit)? = null
-) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .then(
-                if (onClick != null) Modifier.clickable { onClick() } else Modifier
-            ),
-        shape = RoundedCornerShape(18.dp),
-        tonalElevation = 1.dp,
-        color = MaterialTheme.colorScheme.surface
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(38.dp)
-                        .clip(CircleShape)
-                        .background(iconTint.copy(alpha = 0.18f))
-                ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = iconTint,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-                Spacer(modifier = Modifier.width(12.dp))
-                Column {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    )
-                    if (subtitle != null) {
-                        Text(
-                            text = subtitle,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+        // ===== MODAL BOTTOM SHEETS =====
+        if (isSheetVisible && currentSheet != ProfileSheetType.NONE) {
+            ModalBottomSheet(
+                onDismissRequest = { closeSheet() },
+                sheetState = bottomSheetState,
+                containerColor = MaterialTheme.colorScheme.surface,
+                dragHandle = {
+                    Box(
+                        modifier = Modifier
+                            .padding(top = 8.dp, bottom = 4.dp)
+                            .align(Alignment.Center)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .width(40.dp)
+                                .height(4.dp)
+                                .clip(RoundedCornerShape(999.dp))
+                                .background(
+                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)
+                                )
                         )
                     }
                 }
-            }
+            ) {
+                when (currentSheet) {
+                    ProfileSheetType.THEME -> {
+                        ThemeSheet(
+                            selected = themeMode,
+                            onSelect = {
+                                themeMode = it
+                                closeSheet()
+                                // TODO: hook theme change to your app theme system
+                            }
+                        )
+                    }
 
-            trailing?.let {
-                Spacer(modifier = Modifier.width(12.dp))
-                it()
+                    ProfileSheetType.FONT_SIZE -> {
+                        FontSizeSheet(
+                            fontScale = fontScale,
+                            onFontScaleChange = { fontScale = it },
+                            onClose = { closeSheet() }
+                        )
+                    }
+
+                    ProfileSheetType.LANGUAGE -> {
+                        LanguageSheet(
+                            languages = languages,
+                            selected = selectedLanguage,
+                            onSelect = {
+                                selectedLanguage = it
+                                closeSheet()
+                                // TODO: hook to LanguageManager
+                            }
+                        )
+                    }
+
+                    ProfileSheetType.LOGOUT -> {
+                        LogoutSheet(
+                            onCancel = { closeSheet() },
+                            onConfirm = {
+                                closeSheet()
+                                // TODO: real logout logic
+                                navigator.popBackStack()
+                            }
+                        )
+                    }
+
+                    ProfileSheetType.NONE -> Unit
+                }
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun ProfileSettingsScreenPreview() {
-    ProfileScreen(rememberNavController())
 }

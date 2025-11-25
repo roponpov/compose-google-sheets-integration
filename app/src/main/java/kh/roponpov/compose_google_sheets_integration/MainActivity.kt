@@ -137,7 +137,8 @@ class MainActivity : ComponentActivity() {
 
                             composable("profile") {
                                 ProfileScreen(
-                                    navigator = navController
+                                    navigator = navController,
+                                    userViewModel = userViewModel
                                 )
                             }
                         }
