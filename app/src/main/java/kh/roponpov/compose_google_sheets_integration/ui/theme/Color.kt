@@ -38,7 +38,7 @@ val LightColorScheme = lightColorScheme(
     tertiaryContainer = Color(0xFFE0DFFF),
     onTertiaryContainer = Color(0xFF080065),
 
-    background = Neutral0,
+    background = Color(0xFFF5F5F5),
     onBackground = Neutral90,
 
     surface = Neutral0,

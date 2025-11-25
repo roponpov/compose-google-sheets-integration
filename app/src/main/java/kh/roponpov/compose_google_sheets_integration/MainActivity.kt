@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -18,14 +19,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kh.roponpov.compose_google_sheets_integration.core.prefs.AppPreferences
 import kh.roponpov.compose_google_sheets_integration.models.GoogleAuthManagerModel
-import kh.roponpov.compose_google_sheets_integration.models.LanguageManager
 import kh.roponpov.compose_google_sheets_integration.ui.theme.ComposeGoogleSheetsIntegrationTheme
 import kh.roponpov.compose_google_sheets_integration.view.add.AddMemberScreen
 import kh.roponpov.compose_google_sheets_integration.view.home.HomeScreen
 import kh.roponpov.compose_google_sheets_integration.view.language.LanguageScreen
 import kh.roponpov.compose_google_sheets_integration.view.login.GoogleLoginScreen
-import kh.roponpov.compose_google_sheets_integration.view.splash.SplashScreen
+import kh.roponpov.compose_google_sheets_integration.view.profile.ProfileScreen
+import kh.roponpov.compose_google_sheets_integration.view.splash.AppStartupScreen
 import kh.roponpov.compose_google_sheets_integration.view.update.UpdateMemberScreen
 import kh.roponpov.compose_google_sheets_integration.viewmodel.AppStartupViewModel
 import kh.roponpov.compose_google_sheets_integration.viewmodel.MemberRegistrationViewModel
@@ -36,7 +38,7 @@ class MainActivity : ComponentActivity() {
     private val appStartupViewModel: AppStartupViewModel by viewModels()
 
     override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(LanguageManager.wrapContext(newBase))
+        super.attachBaseContext(AppPreferences.wrapContext(newBase))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,28 +49,34 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ComposeGoogleSheetsIntegrationTheme {
-                val isLoading = appStartupViewModel
+                val isLoading by appStartupViewModel
                     .isLoading
                     .collectAsStateWithLifecycle()
-                    .value
+
+                val startDestination by appStartupViewModel
+                    .startDestination
+                    .collectAsStateWithLifecycle()
 
                 val navController = rememberNavController()
                 val userViewModel: UserViewModel = viewModel()
                 val memberRegistrationModel: MemberRegistrationViewModel = viewModel()
-//                SplashScreen()
+
+                LaunchedEffect(Unit) {
+                    userViewModel.loadSavedUser(this@MainActivity)
+                }
+
                 if(isLoading) {
-                    SplashScreen()
+                    AppStartupScreen()
                 } else {
                     Scaffold { padding ->
                         NavHost(
                             navController = navController,
-                            startDestination = "language",
+                            startDestination = startDestination,
                         ) {
                             composable("language") {
-                                // remember selected language locally in this screen
                                 var selectedLanguage by rememberSaveable {
                                     mutableStateOf(
-                                        LanguageManager.getSavedLanguage(this@MainActivity)
+                                        AppPreferences.getSavedLanguage(this@MainActivity)
                                     )
                                 }
 
@@ -78,8 +86,10 @@ class MainActivity : ComponentActivity() {
                                         selectedLanguage = lang
                                     },
                                     onConfirm = {
-                                        // apply + recreate activity (inside LanguageManager)
-                                        LanguageManager.updateAppLocale(
+                                        // 1. mark onboarding as done
+                                        AppPreferences.setFirstLaunch(this@MainActivity, false)
+
+                                        AppPreferences.updateAppLocale(
                                             this@MainActivity,
                                             selectedLanguage
                                         )
@@ -123,6 +133,12 @@ class MainActivity : ComponentActivity() {
                                 } else {
                                     Text("Error: Invalid Member ID")
                                 }
+                            }
+
+                            composable("profile") {
+                                ProfileScreen(
+                                    navigator = navController
+                                )
                             }
                         }
                     }

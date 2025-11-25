@@ -1,4 +1,4 @@
-package kh.roponpov.compose_google_sheets_integration.network
+package kh.roponpov.compose_google_sheets_integration.core.network
 
 import kh.roponpov.compose_google_sheets_integration.models.UpdateValuesResponseModel
 import kh.roponpov.compose_google_sheets_integration.models.GoogleSheetResponseModel

@@ -1,4 +1,4 @@
-package kh.roponpov.compose_google_sheets_integration.network
+package kh.roponpov.compose_google_sheets_integration.core.network
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory

@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import kh.roponpov.compose_google_sheets_integration.R
 
 @Composable
-fun SplashScreen() {
+fun AppStartupScreen() {
     val transition = rememberInfiniteTransition(label = "logo_anim")
     val scale by transition.animateFloat(
         initialValue = 0.96f,

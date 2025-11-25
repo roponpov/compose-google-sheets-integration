@@ -1,6 +1,5 @@
 package kh.roponpov.compose_google_sheets_integration.view.home
 
-import kh.roponpov.compose_google_sheets_integration.viewmodel.UserViewModel
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,9 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import kh.roponpov.compose_google_sheets_integration.viewmodel.UserViewModel
 
 @Composable
-fun TopBarSection(totalMember: Int ,userViewModel: UserViewModel) {
+fun TopBarSection(totalMember: Int ,userViewModel: UserViewModel,navigator: NavController) {
     Row (
         modifier = Modifier
             .windowInsetsPadding(WindowInsets.statusBars)
@@ -38,7 +39,10 @@ fun TopBarSection(totalMember: Int ,userViewModel: UserViewModel) {
         AnimatedProfileRing(
             imageUrl = userViewModel.user.value?.photoUrl ?: null,
             size = 40.dp,
-            ringWidth = 1.dp
+            ringWidth = 1.dp,
+            onClick = {
+                navigator.navigate("profile")
+            }
         )
     }
 }

@@ -5,7 +5,7 @@ import kh.roponpov.compose_google_sheets_integration.constant.CredentialKeys
 import kh.roponpov.compose_google_sheets_integration.models.BatchUpdateRequestModel
 import kh.roponpov.compose_google_sheets_integration.models.BatchUpdateResponseModel
 import kh.roponpov.compose_google_sheets_integration.models.ValueRangeModel
-import kh.roponpov.compose_google_sheets_integration.network.NetworkService
+import kh.roponpov.compose_google_sheets_integration.core.network.NetworkService
 import kh.roponpov.compose_google_sheets_integration.models.PaymentStatus
 import kh.roponpov.compose_google_sheets_integration.models.DegreeType
 import kh.roponpov.compose_google_sheets_integration.models.DeleteDimensionRequestModel

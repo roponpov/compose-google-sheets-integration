@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package kh.roponpov.compose_google_sheets_integration.view.login
 
 import android.content.Context
@@ -29,7 +31,6 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -45,7 +46,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +58,8 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Scope
 import kh.roponpov.compose_google_sheets_integration.BuildConfig
 import kh.roponpov.compose_google_sheets_integration.R
+import kh.roponpov.compose_google_sheets_integration.view.component.AppErrorDialog
+import kh.roponpov.compose_google_sheets_integration.view.component.AppLoadingDialog
 import kh.roponpov.compose_google_sheets_integration.viewmodel.UserViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -82,7 +84,10 @@ fun GoogleLoginScreen(
 
         try {
             val account = task.getResult(ApiException::class.java)
-            userViewModel.setFromGoogleAccount(account)
+            userViewModel.setFromGoogleAccount(
+                context = context,
+                account = account
+            )
             scope.launch {
                 isSigningIn = true
                 errorMessage = null
@@ -222,13 +227,18 @@ fun GoogleLoginScreen(
                             }
                         )
 
+                        if (isSigningIn) {
+                            AppLoadingDialog(
+                                loadingText = "Connecting to your Google Account…"
+                            )
+                        }
+
+                        // ========= ERROR DIALOG =========
                         if (errorMessage != null) {
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = errorMessage!!,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.error,
-                                textAlign = TextAlign.Center
+                            AppErrorDialog(
+                                title = "Sign-in failed",
+                                message = errorMessage!!,
+                                onDismiss = { errorMessage = null }
                             )
                         }
                     }
@@ -260,30 +270,6 @@ fun GoogleLoginScreen(
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(horizontal = 32.dp)
                     )
-                }
-
-
-            }
-
-            // ========= LOADING OVERLAY =========
-            if (isSigningIn) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.25f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        CircularProgressIndicator()
-                        Text(
-                            text = "Connecting to your Google Account…",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
                 }
             }
         }

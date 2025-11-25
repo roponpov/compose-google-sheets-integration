@@ -117,7 +117,7 @@ fun HomeScreen(
         modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
         containerColor = Color(0xFFF5F5F5),
         topBar = {
-            TopBarSection(members.size,userViewModel)
+            TopBarSection(members.size,userViewModel,navigator)
         },
         floatingActionButton = {
             FloatingActionButton(

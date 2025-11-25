@@ -8,6 +8,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -33,6 +34,7 @@ fun AnimatedProfileRing(
     imageUrl: String? = null,
     size: Dp = 50.dp,
     ringWidth: Dp = 3.dp,
+    onClick: () -> Unit
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "rotation")
     val rotation by infiniteTransition.animateFloat(
@@ -46,7 +48,9 @@ fun AnimatedProfileRing(
     )
 
     Box(
-        modifier = Modifier.size(size),
+        modifier = Modifier.size(size).clickable{
+            onClick()
+        },
         contentAlignment = Alignment.Center
     ) {
         Box(
