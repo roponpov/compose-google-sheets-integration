@@ -1,5 +1,6 @@
 package kh.roponpov.compose_google_sheets_integration.view.profile
 
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,7 +49,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -57,7 +60,10 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kh.roponpov.compose_google_sheets_integration.R
+import kh.roponpov.compose_google_sheets_integration.core.language.AppLanguage
+import kh.roponpov.compose_google_sheets_integration.core.prefs.AppPreferences
 import kh.roponpov.compose_google_sheets_integration.models.AppThemeMode
+import kh.roponpov.compose_google_sheets_integration.viewmodel.LanguageViewModel
 import kh.roponpov.compose_google_sheets_integration.viewmodel.ThemeViewModel
 import kh.roponpov.compose_google_sheets_integration.viewmodel.UserViewModel
 
@@ -75,6 +81,7 @@ fun ProfileScreen(
     navigator: NavController,
     userViewModel: UserViewModel,
     themeViewModel: ThemeViewModel,
+    languageViewModel: LanguageViewModel,
 ) {
     val systemUiController = rememberSystemUiController()
     val primaryColor = MaterialTheme.colorScheme.primary
@@ -97,8 +104,18 @@ fun ProfileScreen(
     // Font scale can stay local for now
     var fontScale by remember { mutableFloatStateOf(1.0f) }
 
-    val languages = listOf("English", "Khmer", "Chinese")
-    var selectedLanguage by remember { mutableStateOf(languages[0]) }
+    // Use enum instead of raw strings
+    val languages = listOf(
+        AppLanguage.ENGLISH,
+        AppLanguage.KHMER,
+        AppLanguage.CHINESE,
+        AppLanguage.LAO
+    )
+
+    val context = LocalContext.current
+    val activity = context as? Activity
+
+    val selectedLanguage by languageViewModel.currentLanguage
 
     val scrollState = rememberScrollState()
 
@@ -168,7 +185,7 @@ fun ProfileScreen(
                         )
                     }
                     Text(
-                        text = "Profile Settings",
+                        text = stringResource(R.string.profile_settings),
                         color = MaterialTheme.colorScheme.onPrimary,
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Normal
@@ -267,7 +284,7 @@ fun ProfileScreen(
                     icon = R.drawable.language_icon,
                     iconTint = MaterialTheme.colorScheme.primary,
                     title = "Language",
-                    subtitle = selectedLanguage,
+                    subtitle = selectedLanguage.displayName,
                     onClick = { openSheet(ProfileSheetType.LANGUAGE) }
                 )
 
@@ -385,21 +402,40 @@ fun ProfileScreen(
                         LanguageSheet(
                             languages = languages,
                             selected = selectedLanguage,
-                            onSelect = {
-                                selectedLanguage = it
-                                closeSheet()
-                                // TODO: hook to LanguageManager
+                            onSelect = { lang ->
+                                // 1) If user taps the same language, just close the sheet and do nothing
+                                if (lang == selectedLanguage) {
+                                    closeSheet()
+                                    return@LanguageSheet
+                                }
+
+                                // 2) Update ViewModel + save to prefs
+                                languageViewModel.setLanguage(lang)
+
+                                // 3) Restart app from root so locale is applied everywhere
+                                activity?.let {
+                                    AppPreferences.restartAppFromRoot(it, lang) // if your function still has (activity, lang)
+                                }
+
+                                // No need closeSheet() here because app is restarting anyway,
+                                // but it's harmless if you leave it.
                             }
                         )
                     }
+
 
                     ProfileSheetType.LOGOUT -> {
                         LogoutSheet(
                             onCancel = { closeSheet() },
                             onConfirm = {
                                 closeSheet()
-                                // TODO: real logout logic
-                                navigator.popBackStack()
+
+                                activity?.let {
+                                    userViewModel.clear(
+                                        context = context,
+                                        activity = it,
+                                    )
+                                }
                             }
                         )
                     }

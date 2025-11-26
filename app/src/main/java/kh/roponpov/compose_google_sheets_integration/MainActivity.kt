@@ -30,6 +30,7 @@ import kh.roponpov.compose_google_sheets_integration.view.profile.ProfileScreen
 import kh.roponpov.compose_google_sheets_integration.view.splash.AppStartupScreen
 import kh.roponpov.compose_google_sheets_integration.view.update.UpdateMemberScreen
 import kh.roponpov.compose_google_sheets_integration.viewmodel.AppStartupViewModel
+import kh.roponpov.compose_google_sheets_integration.viewmodel.LanguageViewModel
 import kh.roponpov.compose_google_sheets_integration.viewmodel.MemberRegistrationViewModel
 import kh.roponpov.compose_google_sheets_integration.viewmodel.ThemeViewModel
 import kh.roponpov.compose_google_sheets_integration.viewmodel.UserViewModel
@@ -64,6 +65,7 @@ class MainActivity : ComponentActivity() {
                     .collectAsStateWithLifecycle()
 
                 val navController = rememberNavController()
+                val languageViewModel: LanguageViewModel = viewModel()
                 val userViewModel: UserViewModel = viewModel()
                 val memberRegistrationModel: MemberRegistrationViewModel = viewModel()
 
@@ -90,15 +92,15 @@ class MainActivity : ComponentActivity() {
                                     selectedLanguage = selectedLanguage,
                                     onLanguageSelected = { lang ->
                                         selectedLanguage = lang
+                                        AppPreferences.applyLocaleToActivity(
+                                            this@MainActivity,
+                                            lang
+                                        )
                                     },
                                     onConfirm = {
                                         // 1. mark onboarding as done
                                         AppPreferences.setFirstLaunch(this@MainActivity, false)
 
-                                        AppPreferences.updateAppLocale(
-                                            this@MainActivity,
-                                            selectedLanguage
-                                        )
                                         // after language pick, go to login
                                         navController.navigate("login") {
                                             popUpTo("language") { inclusive = true }
@@ -148,6 +150,7 @@ class MainActivity : ComponentActivity() {
                                     navigator = navController,
                                     userViewModel = userViewModel,
                                     themeViewModel = themeViewModel,
+                                    languageViewModel= languageViewModel,
                                 )
                             }
                         }

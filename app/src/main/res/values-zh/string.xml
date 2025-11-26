@@ -4,4 +4,5 @@
     <string name="change_language">更改语言</string>
     <string name="language_title">选择你的语言</string>
     <string name="language_subtitle">你之后可以再更改。</string>
+    <string name="profile_settings">配置文件设置</string>
 </resources>

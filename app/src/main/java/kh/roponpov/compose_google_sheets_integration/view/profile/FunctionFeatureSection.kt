@@ -106,5 +106,5 @@ fun FunctionFeatureSection(
 @Preview(showBackground = true)
 @Composable
 private fun ProfileSettingsScreenPreview() {
-    ProfileScreen(rememberNavController(), viewModel(),viewModel())
+    ProfileScreen(rememberNavController(), viewModel(),viewModel(), viewModel())
 }

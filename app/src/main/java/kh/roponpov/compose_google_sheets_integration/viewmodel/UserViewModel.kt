@@ -1,5 +1,6 @@
 package kh.roponpov.compose_google_sheets_integration.viewmodel
 
+import android.app.Activity
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import kh.roponpov.compose_google_sheets_integration.models.GoogleUserProfileModel
@@ -34,9 +35,9 @@ class UserViewModel : ViewModel() {
         _user.value = AppPreferences.getUserProfile(context)
     }
 
-    fun clear(context: Context) {
+    fun clear(context: Context,activity: Activity) {
         _user.value = null
-        AppPreferences.clearUserProfile(context)
+        AppPreferences.clearUserProfile(context,activity)
     }
 
     private fun String?.orElse(default: String = "") = this ?: default

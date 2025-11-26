@@ -2,6 +2,7 @@ package kh.roponpov.compose_google_sheets_integration.core.prefs
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.squareup.moshi.Moshi
@@ -38,7 +39,7 @@ object AppPreferences {
 
     fun getSavedLanguage(context: Context): AppLanguage {
         val code = prefs(context).getString(KEY_LANGUAGE_CODE, null)
-        return AppLanguage.Companion.fromCode(code)
+        return AppLanguage.fromCode(code)
     }
 
     fun saveLanguage(context: Context, language: AppLanguage) {
@@ -47,8 +48,9 @@ object AppPreferences {
         }
     }
 
-    fun updateAppLocale(activity: Activity, language: AppLanguage) {
-        this.saveLanguage(activity, language)
+    fun applyLocaleToActivity(activity: Activity, language: AppLanguage) {
+        // Save language
+        saveLanguage(activity, language)
 
         val locale = language.locale
         Locale.setDefault(locale)
@@ -59,8 +61,11 @@ object AppPreferences {
 
         @Suppress("DEPRECATION")
         res.updateConfiguration(config, res.displayMetrics)
+    }
 
-        activity.recreate()
+    fun restartAppFromRoot(activity: Activity, language: AppLanguage) {
+        applyLocaleToActivity(activity, language)
+        restartAppFromRoot(activity)
     }
 
     fun getUserProfile(context: Context): GoogleUserProfileModel? {
@@ -75,10 +80,26 @@ object AppPreferences {
         }
     }
 
-    fun clearUserProfile(context: Context) {
+    fun clearUserProfile(context: Context,activity: Activity) {
         prefs(context).edit {
             remove(KEY_USER_PROFILE)
         }
+        restartAppFromRoot(activity)
+    }
+
+    private fun restartAppFromRoot(activity: Activity) {
+        val intent = activity.packageManager
+            .getLaunchIntentForPackage(activity.packageName)
+            ?: return
+
+        intent.addFlags(
+            Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP
+        )
+
+        activity.startActivity(intent)
+        activity.finish()
     }
 
     fun saveThemeMode(context: Context, mode: AppThemeMode) {
