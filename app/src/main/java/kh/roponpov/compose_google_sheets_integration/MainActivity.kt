@@ -21,7 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kh.roponpov.compose_google_sheets_integration.core.prefs.AppPreferences
 import kh.roponpov.compose_google_sheets_integration.models.GoogleAuthManagerModel
-import kh.roponpov.compose_google_sheets_integration.ui.theme.ComposeGoogleSheetsIntegrationTheme
+import kh.roponpov.compose_google_sheets_integration.ui.theme.AppTheme
 import kh.roponpov.compose_google_sheets_integration.view.add.AddMemberScreen
 import kh.roponpov.compose_google_sheets_integration.view.home.HomeScreen
 import kh.roponpov.compose_google_sheets_integration.view.language.LanguageScreen
@@ -31,6 +31,7 @@ import kh.roponpov.compose_google_sheets_integration.view.splash.AppStartupScree
 import kh.roponpov.compose_google_sheets_integration.view.update.UpdateMemberScreen
 import kh.roponpov.compose_google_sheets_integration.viewmodel.AppStartupViewModel
 import kh.roponpov.compose_google_sheets_integration.viewmodel.MemberRegistrationViewModel
+import kh.roponpov.compose_google_sheets_integration.viewmodel.ThemeViewModel
 import kh.roponpov.compose_google_sheets_integration.viewmodel.UserViewModel
 
 class MainActivity : ComponentActivity() {
@@ -48,7 +49,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            ComposeGoogleSheetsIntegrationTheme {
+            val themeViewModel = viewModel<ThemeViewModel>()
+            val theme = themeViewModel.theme.value
+
+            AppTheme(
+                themeMode = theme
+            ) {
                 val isLoading by appStartupViewModel
                     .isLoading
                     .collectAsStateWithLifecycle()
@@ -109,7 +115,8 @@ class MainActivity : ComponentActivity() {
                                         navController.navigate("home") {
                                             popUpTo("login") { inclusive = true }
                                         }
-                                    })
+                                    }
+                                )
                             }
 
                             composable("home") {
@@ -120,6 +127,7 @@ class MainActivity : ComponentActivity() {
                                     memberRegistrationViewModel = memberRegistrationModel
                                 )
                             }
+
                             composable("add") { AddMemberScreen(navController) }
 
                             composable("update/{id}") { backStackEntry ->
@@ -138,7 +146,8 @@ class MainActivity : ComponentActivity() {
                             composable("profile") {
                                 ProfileScreen(
                                     navigator = navController,
-                                    userViewModel = userViewModel
+                                    userViewModel = userViewModel,
+                                    themeViewModel = themeViewModel,
                                 )
                             }
                         }

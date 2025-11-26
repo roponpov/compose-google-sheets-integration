@@ -20,7 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberOverscrollEffect
+//import androidx.compose.foundation.rememberOverscrollEffect
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -35,14 +35,14 @@ import androidx.compose.ui.Alignment
 @Composable
 fun MemberListShimmer() {
     val listState = rememberLazyListState()
-    val overscroll = rememberOverscrollEffect()
+//    val overscroll = rememberOverscrollEffect()
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = listState,
         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        overscrollEffect = overscroll,
+//        overscrollEffect = overscroll,
 
     ) {
         items(6) {

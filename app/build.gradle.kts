@@ -1,3 +1,4 @@
+import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
@@ -10,6 +11,30 @@ plugins {
 android {
     namespace = "kh.roponpov.compose_google_sheets_integration"
     compileSdk = 35
+
+    val keystorePropsFile = File(rootDir, "keystore.properties")
+    val keystoreProps = Properties().apply {
+        if (keystorePropsFile.exists()) {
+            FileInputStream(keystorePropsFile).use { load(it) }
+        }
+    }
+
+    signingConfigs {
+        // 🔐 2) CREATE RELEASE SIGNING CONFIG
+        create("release") {
+            // Option A: load from keystore.properties
+            storeFile = keystoreProps["storeFile"]?.let { file(it as String) }
+            storePassword = keystoreProps["storePassword"] as String?
+            keyAlias = keystoreProps["keyAlias"] as String?
+            keyPassword = keystoreProps["keyPassword"] as String?
+
+            // 👉 OR for quick test, hardcode (NOT for production)
+            // storeFile = file("my-release-key.jks")
+            // storePassword = "yourStorePassword"
+            // keyAlias = "yourAlias"
+            // keyPassword = "yourKeyPassword"
+        }
+    }
 
     defaultConfig {
 
@@ -39,6 +64,9 @@ android {
 
     buildTypes {
         release {
+            // 🔑 3) TELL RELEASE TO USE THE SIGNING CONFIG
+            signingConfig = signingConfigs.getByName("release")
+
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -46,6 +74,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11

@@ -24,7 +24,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -58,6 +57,8 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kh.roponpov.compose_google_sheets_integration.R
+import kh.roponpov.compose_google_sheets_integration.models.AppThemeMode
+import kh.roponpov.compose_google_sheets_integration.viewmodel.ThemeViewModel
 import kh.roponpov.compose_google_sheets_integration.viewmodel.UserViewModel
 
 private enum class ProfileSheetType {
@@ -68,26 +69,21 @@ private enum class ProfileSheetType {
     LOGOUT
 }
 
-enum class ThemeMode {
-    LIGHT,
-    DARK,
-    SYSTEM
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     navigator: NavController,
     userViewModel: UserViewModel,
+    themeViewModel: ThemeViewModel,
 ) {
     val systemUiController = rememberSystemUiController()
     val primaryColor = MaterialTheme.colorScheme.primary
-    val darkIcons = primaryColor.luminance() > 0.5f
+    primaryColor.luminance() > 0.5f
 
     SideEffect {
         systemUiController.setStatusBarColor(
-            color = primaryColor,
-            darkIcons = darkIcons
+            color = Color.Transparent,
+            darkIcons = false
         )
     }
 
@@ -95,8 +91,11 @@ fun ProfileScreen(
     val sheetOverlap = 40.dp
 
     // Theme + font state (hook this to DataStore later if you want)
-    var themeMode by remember { mutableStateOf(ThemeMode.SYSTEM) }
-    var fontScale by remember { mutableFloatStateOf(1.0f) } // 0.9 / 1.0 / 1.25
+    // Theme from ViewModel (single source of truth)
+    val themeMode by themeViewModel.theme
+
+    // Font scale can stay local for now
+    var fontScale by remember { mutableFloatStateOf(1.0f) }
 
     val languages = listOf("English", "Khmer", "Chinese")
     var selectedLanguage by remember { mutableStateOf(languages[0]) }
@@ -157,8 +156,7 @@ fun ProfileScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .statusBarsPadding()
-                        .padding(horizontal = 0.dp, vertical = 0.dp),
+                        .statusBarsPadding() .padding(horizontal = 0.dp, vertical = 0.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = { navigator.popBackStack() }) {
@@ -183,8 +181,8 @@ fun ProfileScreen(
                 // Center profile
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
                         .windowInsetsPadding(WindowInsets.statusBars)
+                        .fillMaxSize()
                         .align(Alignment.Center),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
@@ -231,9 +229,9 @@ fun ProfileScreen(
                     iconTint = MaterialTheme.colorScheme.primary,
                     title = "Theme",
                     subtitle = when (themeMode) {
-                        ThemeMode.DARK -> "Dark"
-                        ThemeMode.LIGHT -> "Light"
-                        ThemeMode.SYSTEM -> "System default"
+                        AppThemeMode.DARK -> "Dark"
+                        AppThemeMode.LIGHT -> "Light"
+                        AppThemeMode.SYSTEM -> "System default"
                     },
                     onClick = { openSheet(ProfileSheetType.THEME) }
                 )
@@ -368,7 +366,7 @@ fun ProfileScreen(
                         ThemeSheet(
                             selected = themeMode,
                             onSelect = {
-                                themeMode = it
+                                themeViewModel.setTheme(it)
                                 closeSheet()
                                 // TODO: hook theme change to your app theme system
                             }

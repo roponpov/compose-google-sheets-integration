@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.squareup.moshi.Moshi
 import kh.roponpov.compose_google_sheets_integration.core.language.AppLanguage
+import kh.roponpov.compose_google_sheets_integration.models.AppThemeMode
 import kh.roponpov.compose_google_sheets_integration.models.GoogleUserProfileModel
 import java.util.Locale
 
@@ -16,6 +17,7 @@ object AppPreferences {
     private const val KEY_IS_FIRST_LAUNCH = "is_first_launch"
     private const val KEY_LANGUAGE_CODE = "language_code"
     private const val KEY_USER_PROFILE = "user_profile"
+    private const val KEY_THEME_MODE = "theme_mode"
 
     private val moshi by lazy { Moshi.Builder().build() }
     private val profileAdapter by lazy {
@@ -33,15 +35,6 @@ object AppPreferences {
             putBoolean(KEY_IS_FIRST_LAUNCH, value)
         }
     }
-
-//    fun saveAccessToken(context: Context, token: String) {
-//        prefs(context).edit {
-//            putString(KEY_ACCESS_TOKEN, token)
-//        }
-//    }
-//
-//    fun getAccessToken(context: Context): String? =
-//        prefs(context).getString(KEY_ACCESS_TOKEN, null)
 
     fun getSavedLanguage(context: Context): AppLanguage {
         val code = prefs(context).getString(KEY_LANGUAGE_CODE, null)
@@ -86,6 +79,17 @@ object AppPreferences {
         prefs(context).edit {
             remove(KEY_USER_PROFILE)
         }
+    }
+
+    fun saveThemeMode(context: Context, mode: AppThemeMode) {
+        prefs(context).edit {
+            putString(KEY_THEME_MODE, mode.value)
+        }
+    }
+
+    fun getThemeMode(context: Context): AppThemeMode {
+        val stored = prefs(context).getString(KEY_THEME_MODE, AppThemeMode.SYSTEM.value)
+        return AppThemeMode.fromValue(stored)
     }
 
     fun wrapContext(base: Context): Context {

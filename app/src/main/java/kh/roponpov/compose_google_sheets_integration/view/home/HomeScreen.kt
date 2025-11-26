@@ -1,6 +1,5 @@
 package kh.roponpov.compose_google_sheets_integration.view.home
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -36,15 +35,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kh.roponpov.compose_google_sheets_integration.models.GoogleAuthManagerModel
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
-import kh.roponpov.compose_google_sheets_integration.ui.theme.ComposeGoogleSheetsIntegrationTheme
 import kh.roponpov.compose_google_sheets_integration.view.component.AppConfirmDialog
 import kh.roponpov.compose_google_sheets_integration.view.component.AppCustomDialog
 import kh.roponpov.compose_google_sheets_integration.view.component.AppLoadingDialog
@@ -199,14 +194,12 @@ fun HomeScreen(
             }
         }
 
-        // 🔄 Loading dialog when deleting
         if (isSubmitting) {
             AppLoadingDialog(
                 loadingText = "Deleting member..."
             )
         }
 
-        // ❓ Confirmation dialog on delete click
         if (showDeleteConfirm && memberToDelete != null) {
             val name = memberToDelete!!.latinName
 
@@ -232,8 +225,6 @@ fun HomeScreen(
             )
         }
 
-
-        // ✅ Success / error dialog after delete
         deleteResult?.let { result ->
             AppCustomDialog(
                 title = if (result is MemberRegistrationViewModel.SubmitResult.Success)
@@ -249,11 +240,9 @@ fun HomeScreen(
                     memberRegistrationViewModel.clearDeleteResult()
                 },
                 onSuccessNavigateBack = {
-                    // We are already in Home, so just close dialog
                     memberRegistrationViewModel.clearDeleteResult()
                 }
             )
         }
-
     }
 }

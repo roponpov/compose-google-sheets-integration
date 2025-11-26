@@ -1,25 +1,37 @@
 package kh.roponpov.compose_google_sheets_integration.view.profile
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.abs
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FontSizeSheet(
     fontScale: Float,
@@ -27,6 +39,7 @@ fun FontSizeSheet(
     onClose: () -> Unit
 ) {
     val steps = listOf(0.9f, 1.0f, 1.25f)
+    var sliderValue by remember(fontScale) { mutableFloatStateOf(fontScale) }
 
     fun snapToStep(value: Float): Float {
         return steps.minBy { abs(it - value) }
@@ -58,7 +71,23 @@ fun FontSizeSheet(
                 onFontScaleChange(snapped)
             },
             valueRange = steps.first()..steps.last(),
-            steps = steps.size - 2
+            steps = steps.size - 2,
+            thumb = {
+                Box(
+                    modifier = Modifier
+                        .width(10.dp)
+                        .height(25.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(5.dp)
+                        )
+                )
+            },
+            colors = SliderDefaults.colors(
+                activeTrackColor = MaterialTheme.colorScheme.primary,
+                inactiveTrackColor = MaterialTheme.colorScheme.background,
+                thumbColor = MaterialTheme.colorScheme.primary,
+            )
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -116,4 +145,14 @@ fun FontSizeSheet(
 
         Spacer(modifier = Modifier.height(16.dp))
     }
+}
+
+@Preview
+@Composable
+fun PreviewNow () {
+    FontSizeSheet(
+        fontScale = 1f,
+        onFontScaleChange = { },
+        onClose = {  }
+    )
 }

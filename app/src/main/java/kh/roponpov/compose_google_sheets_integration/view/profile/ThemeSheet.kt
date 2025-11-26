@@ -20,18 +20,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kh.roponpov.compose_google_sheets_integration.R
+import kh.roponpov.compose_google_sheets_integration.models.AppThemeMode
 
 @Composable
 fun ThemeSheet(
-    selected: ThemeMode,
-    onSelect: (ThemeMode) -> Unit
+    selected: AppThemeMode,
+    onSelect: (AppThemeMode) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -56,24 +61,24 @@ fun ThemeSheet(
             icon = R.drawable.light_mode_icon,
             title = "Light",
             desc = "Bright background and dark text",
-            isSelected = selected == ThemeMode.LIGHT,
-            onClick = { onSelect(ThemeMode.LIGHT) }
+            isSelected = selected == AppThemeMode.LIGHT,
+            onClick = { onSelect(AppThemeMode.LIGHT) }
         )
 
         ThemeOptionRow(
             icon = R.drawable.dark_mode_icon,
             title = "Dark",
             desc = "Dark background and light text",
-            isSelected = selected == ThemeMode.DARK,
-            onClick = { onSelect(ThemeMode.DARK) }
+            isSelected = selected == AppThemeMode.DARK,
+            onClick = { onSelect(AppThemeMode.DARK) }
         )
 
         ThemeOptionRow(
             icon = R.drawable.system_mode_icon,
             title = "System",
             desc = "Follow your device theme",
-            isSelected = selected == ThemeMode.SYSTEM,
-            onClick = { onSelect(ThemeMode.SYSTEM) }
+            isSelected = selected == AppThemeMode.SYSTEM,
+            onClick = { onSelect(AppThemeMode.SYSTEM) }
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -81,7 +86,7 @@ fun ThemeSheet(
 }
 
 @Composable
-fun ThemeOptionRow(
+private fun ThemeOptionRow(
     icon: Int,
     title: String,
     desc: String,
