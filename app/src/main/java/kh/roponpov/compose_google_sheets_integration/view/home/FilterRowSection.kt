@@ -39,7 +39,7 @@ fun FilterRowSection(
                 onClick = { onFilterChange(filter) },
                 colors = FilterChipDefaults.filterChipColors(
                     // UNSELECTED
-                    containerColor = Color.White,
+                    containerColor = MaterialTheme.colorScheme.onPrimary,
                     labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     iconColor = MaterialTheme.colorScheme.onSurfaceVariant,
 

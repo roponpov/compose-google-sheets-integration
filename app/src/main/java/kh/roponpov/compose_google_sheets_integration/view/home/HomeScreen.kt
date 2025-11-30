@@ -56,7 +56,7 @@ fun HomeScreen(
 ) {
 
     val systemUiController = rememberSystemUiController()
-    val primaryColor = Color(0xFFF5F5F5)
+    val primaryColor = MaterialTheme.colorScheme.primary
     val darkIcons = primaryColor.luminance() > 0.5f
 
     var searchQuery by remember { mutableStateOf("") }
@@ -110,7 +110,7 @@ fun HomeScreen(
 
     Scaffold(
         modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
-        containerColor = Color(0xFFF5F5F5),
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopBarSection(members.size,userViewModel,navigator)
         },

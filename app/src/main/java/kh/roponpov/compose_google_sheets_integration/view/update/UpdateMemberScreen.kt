@@ -54,7 +54,7 @@ fun UpdateMemberScreen(
 
     Scaffold(
         modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
-        containerColor = Color(0xFFF5F5F5),
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(

@@ -51,7 +51,7 @@ fun AppDropdownField(
                 .fillMaxWidth()
                 .heightIn(min = 45.dp)
                 .background(
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     shape = RoundedCornerShape(10.dp)
                 )
                 .border(

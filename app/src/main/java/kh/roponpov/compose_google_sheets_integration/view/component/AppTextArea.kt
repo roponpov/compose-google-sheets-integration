@@ -70,7 +70,7 @@ fun AppTextArea(
                 .heightIn(min = 72.dp)
                 .onFocusChanged { isFocused = it.isFocused }
                 .background(
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     shape = RoundedCornerShape(10.dp)
                 )
                 .border(

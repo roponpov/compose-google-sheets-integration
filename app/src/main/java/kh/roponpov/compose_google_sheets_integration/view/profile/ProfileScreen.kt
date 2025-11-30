@@ -70,7 +70,6 @@ import kh.roponpov.compose_google_sheets_integration.viewmodel.UserViewModel
 private enum class ProfileSheetType {
     NONE,
     THEME,
-    FONT_SIZE,
     LANGUAGE,
     LOGOUT
 }
@@ -253,28 +252,6 @@ fun ProfileScreen(
                     onClick = { openSheet(ProfileSheetType.THEME) }
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Font size (OPEN bottom sheet)
-                FunctionFeatureSection(
-                    icon = R.drawable.font_size_icon,
-                    iconTint = MaterialTheme.colorScheme.primary,
-                    title = "Font Size",
-                    subtitle = "Tap to adjust app text size",
-                    onClick = { openSheet(ProfileSheetType.FONT_SIZE) },
-                    trailing = {
-                        Text(
-                            text = when (fontScale) {
-                                0.9f -> "Small"
-                                1.25f -> "Bigger"
-                                else -> "Normal"
-                            } + " ${(fontScale * 100).toInt()}%",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        )
-                    }
-                )
-
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // ===== Language section =====
@@ -387,14 +364,6 @@ fun ProfileScreen(
                                 closeSheet()
                                 // TODO: hook theme change to your app theme system
                             }
-                        )
-                    }
-
-                    ProfileSheetType.FONT_SIZE -> {
-                        FontSizeSheet(
-                            fontScale = fontScale,
-                            onFontScaleChange = { fontScale = it },
-                            onClose = { closeSheet() }
                         )
                     }
 

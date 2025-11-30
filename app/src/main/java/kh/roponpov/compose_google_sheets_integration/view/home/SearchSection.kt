@@ -54,7 +54,7 @@ fun SearchSection(
             .padding(horizontal = 16.dp, vertical = 0.dp)
             .height(45.dp)
             .background(
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onPrimary,
                 shape = RoundedCornerShape(10.dp)
             )
             .border(

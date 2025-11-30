@@ -14,7 +14,6 @@ import java.util.Locale
 object AppPreferences {
 
     private const val PREF_NAME = "app_prefs"
-    private const val KEY_ACCESS_TOKEN = "access_token"
     private const val KEY_IS_FIRST_LAUNCH = "is_first_launch"
     private const val KEY_LANGUAGE_CODE = "language_code"
     private const val KEY_USER_PROFILE = "user_profile"
