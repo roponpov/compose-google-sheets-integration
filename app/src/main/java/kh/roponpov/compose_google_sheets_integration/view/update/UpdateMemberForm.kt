@@ -158,7 +158,7 @@ fun UpdateMemberForm(
                     value = gender?.text ?: "Select gender",
                     valueStyle = MaterialTheme.typography.bodySmall.copy(
                         fontSize = 13.sp,
-                        color = if (gender == null) Color.Gray else MaterialTheme.colorScheme.onSecondary
+                        color = if (gender == null) Color.Gray else MaterialTheme.colorScheme.onBackground
                     ),
                     expanded = genderExpanded,
                     modifier = Modifier
@@ -236,7 +236,7 @@ fun UpdateMemberForm(
                     value = paymentStatus?.text ?: "Select payment status",
                     valueStyle = MaterialTheme.typography.bodySmall.copy(
                         fontSize = 13.sp,
-                        color = if (paymentStatus == null) Color.Gray else MaterialTheme.colorScheme.onSecondary
+                        color = if (paymentStatus == null) Color.Gray else MaterialTheme.colorScheme.onBackground
                     ),
                     expanded = paymentExpanded,
                     isError = paymentStatusError != null,
@@ -313,7 +313,7 @@ fun UpdateMemberForm(
                     value = degree?.text ?: "Select degree",
                     valueStyle = MaterialTheme.typography.bodySmall.copy(
                         fontSize = 13.sp,
-                        color = if (degree == null) Color.Gray else MaterialTheme.colorScheme.onSecondary
+                        color = if (degree == null) Color.Gray else MaterialTheme.colorScheme.onBackground
                     ),
                     expanded = degreeExpanded,
                     isError = degreeError != null,
@@ -439,7 +439,7 @@ fun UpdateMemberForm(
                 "Update",
                 modifier = Modifier.align(Alignment.Center),
                 style = MaterialTheme.typography.titleMedium.copy(
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = Color.White
                 )
             )
         }

@@ -5,4 +5,9 @@
     <string name="language_title">ជ្រើសរើសភាសារបស់អ្នក</string>
     <string name="language_subtitle">អ្នកអាចផ្លាស់ប្ដូរវាបានពេលក្រោយ។</string>
     <string name="profile_settings">ការកំណត់ប្រវត្តិរូប</string>
+    <string name="language_display_khmer">ខ្មែរ</string>
+    <string name="language_display_english">អង់គ្លេស</string>
+    <string name="language_display_chinese">ចិន</string>
+    <string name="language_display_lao">ឡាវ</string>
+
 </resources>

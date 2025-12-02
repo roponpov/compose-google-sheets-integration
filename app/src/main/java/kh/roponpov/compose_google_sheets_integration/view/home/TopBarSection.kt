@@ -34,17 +34,6 @@ fun TopBarSection(totalMember: Int ,userViewModel: UserViewModel,navigator: NavC
         verticalAlignment = Alignment.CenterVertically,
     ){
         Column {
-            IconButton(
-                onClick = {},
-                colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = Color.Red,
-                ),
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.logout_icon),
-                    contentDescription = null
-                )
-            }
             Text("Members", style = MaterialTheme.typography.titleLarge)
             Text(
                 "$totalMember records",

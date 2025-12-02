@@ -59,7 +59,7 @@ fun UpdateMemberScreen(
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    titleContentColor = Color.White,
                 ),
                 title = {
                     Text(
@@ -74,7 +74,7 @@ fun UpdateMemberScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            tint = MaterialTheme.colorScheme.onPrimary,
+                            tint = Color.White,
                             contentDescription = "Back"
                         )
                     }

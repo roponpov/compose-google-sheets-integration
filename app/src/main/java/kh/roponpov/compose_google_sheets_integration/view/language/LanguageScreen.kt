@@ -38,7 +38,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import kh.roponpov.compose_google_sheets_integration.core.language.getDisplayName
 
 @Composable
 fun LanguageScreen(
@@ -60,19 +63,39 @@ fun LanguageScreen(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                Text(
-                    text = stringResource(R.string.language_title),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.Bold
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Text(
+                        text = stringResource(R.string.language_title),
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(R.string.language_subtitle),
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(30.dp),
+                    contentAlignment = Alignment.TopStart
+                ) {
+                    Text(
+                        text = stringResource(R.string.language_subtitle),
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
 
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -136,7 +159,7 @@ private fun LanguageItem(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
                     painter = painterResource(language.flagRes),
-                    contentDescription = language.displayName,
+                    contentDescription = language.getDisplayName(),
                     modifier = Modifier
                         .height(42.dp)
                         .width(48.dp)
@@ -145,7 +168,7 @@ private fun LanguageItem(
                 )
                 Spacer(modifier = Modifier.width(14.dp))
                 Text(
-                    text = language.displayName,
+                    text = language.getDisplayName(),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface

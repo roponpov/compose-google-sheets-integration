@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
 import kh.roponpov.compose_google_sheets_integration.core.language.AppLanguage
+import kh.roponpov.compose_google_sheets_integration.core.language.getDisplayName
 
 @Composable
 fun LanguageSheet(
@@ -71,14 +72,14 @@ fun LanguageSheet(
                     // Flag icon from enum
                     Image(
                         painter = painterResource(id = lang.flagRes),
-                        contentDescription = lang.displayName,
+                        contentDescription = lang.getDisplayName(),
                         modifier = Modifier.size(24.dp)
                     )
 
                     Spacer(modifier = Modifier.width(12.dp))
 
                     Text(
-                        text = lang.displayName,
+                        text = lang.getDisplayName(),
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
                         ),

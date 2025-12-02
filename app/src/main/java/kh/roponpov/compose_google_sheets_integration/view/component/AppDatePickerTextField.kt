@@ -85,7 +85,7 @@ fun AppDatePickerTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(45.dp)
-                .background(Color.White, RoundedCornerShape(10.dp))
+                .background(MaterialTheme.colorScheme.onPrimary, RoundedCornerShape(10.dp))
                 .border(
                     width = 1.dp,
                     color = if (isError)
@@ -105,7 +105,7 @@ fun AppDatePickerTextField(
                 text = value.ifEmpty { placeholder },
                 style = MaterialTheme.typography.bodySmall.copy(
                     fontSize = 13.sp,
-                    color = if (value.isEmpty()) Color.Gray else MaterialTheme.colorScheme.onSecondary
+                    color = if (value.isEmpty()) Color.Gray else MaterialTheme.colorScheme.onBackground
                 ),
                 modifier = Modifier.weight(1f)
             )

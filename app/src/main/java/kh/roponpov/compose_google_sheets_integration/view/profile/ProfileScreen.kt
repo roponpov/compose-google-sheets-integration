@@ -61,6 +61,7 @@ import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kh.roponpov.compose_google_sheets_integration.R
 import kh.roponpov.compose_google_sheets_integration.core.language.AppLanguage
+import kh.roponpov.compose_google_sheets_integration.core.language.getDisplayName
 import kh.roponpov.compose_google_sheets_integration.core.prefs.AppPreferences
 import kh.roponpov.compose_google_sheets_integration.models.AppThemeMode
 import kh.roponpov.compose_google_sheets_integration.viewmodel.LanguageViewModel
@@ -180,12 +181,12 @@ fun ProfileScreen(
                             modifier = Modifier.size(25.dp),
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onPrimary
+                            tint = Color.White,
                         )
                     }
                     Text(
                         text = stringResource(R.string.profile_settings),
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        color = Color.White,
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Normal
                         ),
@@ -261,7 +262,7 @@ fun ProfileScreen(
                     icon = R.drawable.language_icon,
                     iconTint = MaterialTheme.colorScheme.primary,
                     title = "Language",
-                    subtitle = selectedLanguage.displayName,
+                    subtitle = selectedLanguage.getDisplayName(),
                     onClick = { openSheet(ProfileSheetType.LANGUAGE) }
                 )
 

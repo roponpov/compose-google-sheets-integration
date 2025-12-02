@@ -5,4 +5,9 @@
     <string name="language_title">ເລືອກພາສາຂອງທ່ານ</string>
     <string name="language_subtitle">ທ່ານສາມາດປ່ຽນໃນພາຍຫຼັງໄດ້.</string>
     <string name="profile_settings">ການຕັ້ງຄ່າໂປຣໄຟລ໌</string>
+    <string name="language_display_khmer">ຂະເໝນ</string>
+    <string name="language_display_english">ພາສາອັງກິດ</string>
+    <string name="language_display_chinese">ພາສາຈີນ</string>
+    <string name="language_display_lao">ລາວ</string>
+
 </resources>

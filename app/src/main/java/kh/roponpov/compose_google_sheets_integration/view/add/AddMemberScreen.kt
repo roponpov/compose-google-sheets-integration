@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package kh.roponpov.compose_google_sheets_integration.view.add
 
 import androidx.compose.foundation.layout.WindowInsets
@@ -48,12 +50,12 @@ fun AddMemberScreen(
 
     Scaffold(
         modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
-        containerColor = Color(0xFFF5F5F5),
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    titleContentColor = Color.White,
                 ),
                 title = {
                     Text(
@@ -68,7 +70,7 @@ fun AddMemberScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            tint = MaterialTheme.colorScheme.onPrimary,
+                            tint = Color.White,
                             contentDescription = "Back"
                         )
                     }

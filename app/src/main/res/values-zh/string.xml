@@ -5,4 +5,9 @@
     <string name="language_title">选择你的语言</string>
     <string name="language_subtitle">你之后可以再更改。</string>
     <string name="profile_settings">配置文件设置</string>
+    <string name="language_display_khmer">高棉语</string>
+    <string name="language_display_english">英语</string>
+    <string name="language_display_chinese">中文</string>
+    <string name="language_display_lao">老挝语</string>
+
 </resources>

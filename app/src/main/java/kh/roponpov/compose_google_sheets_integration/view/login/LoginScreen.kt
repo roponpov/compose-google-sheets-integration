@@ -24,10 +24,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
@@ -46,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -198,19 +195,19 @@ fun GoogleLoginScreen(
                                 )
 
                                 FeatureRow(
-                                    icon = Icons.Default.Refresh,
+                                    icon = R.drawable.instant_synce_icon,
                                     title = "Instant sync",
                                     subtitle = "Send data straight into your Google Sheets without exporting files."
                                 )
 
                                 FeatureRow(
-                                    icon = Icons.Default.CheckCircle,
+                                    icon = R.drawable.one_tap_login,
                                     title = "One-tap login",
                                     subtitle = "Use the Google account already on your device. No extra passwords."
                                 )
 
                                 FeatureRow(
-                                    icon = Icons.Default.Lock,
+                                    icon = R.drawable.scoped_access_icon,
                                     title = "Scoped access",
                                     subtitle = "We only request Sheets access. You can revoke it anytime."
                                 )
@@ -278,7 +275,7 @@ fun GoogleLoginScreen(
 
 @Composable
 private fun FeatureRow(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: Int,
     title: String,
     subtitle: String
 ) {
@@ -295,7 +292,7 @@ private fun FeatureRow(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = icon,
+                painter = painterResource(icon),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(18.dp)
@@ -349,7 +346,7 @@ private fun GoogleSignInButton(
 
             Text(
                 text = "Continue with Google",
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.labelLarge.copy(color = Color.White),
                 modifier = Modifier.padding(vertical = 2.dp)
             )
         }
