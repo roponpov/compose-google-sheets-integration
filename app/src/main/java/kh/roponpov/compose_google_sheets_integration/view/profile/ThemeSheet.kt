@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -43,14 +44,14 @@ fun ThemeSheet(
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
         Text(
-            text = "Theme",
+            text = stringResource(R.string.theme),
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.SemiBold
             )
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Choose how the app looks.",
+            text = stringResource(R.string.choose_how_the_app_looks),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
         )
@@ -59,24 +60,24 @@ fun ThemeSheet(
 
         ThemeOptionRow(
             icon = R.drawable.light_mode_icon,
-            title = "Light",
-            desc = "Bright background and dark text",
+            title = stringResource(R.string.light),
+            desc = stringResource(R.string.bright_background_and_dark_text),
             isSelected = selected == AppThemeMode.LIGHT,
             onClick = { onSelect(AppThemeMode.LIGHT) }
         )
 
         ThemeOptionRow(
             icon = R.drawable.dark_mode_icon,
-            title = "Dark",
-            desc = "Dark background and light text",
+            title = stringResource(R.string.dark),
+            desc = stringResource(R.string.dark_background_and_light_text),
             isSelected = selected == AppThemeMode.DARK,
             onClick = { onSelect(AppThemeMode.DARK) }
         )
 
         ThemeOptionRow(
             icon = R.drawable.system_mode_icon,
-            title = "System",
-            desc = "Follow your device theme",
+            title = stringResource(R.string.system),
+            desc = stringResource(R.string.follow_your_device_theme),
             isSelected = selected == AppThemeMode.SYSTEM,
             onClick = { onSelect(AppThemeMode.SYSTEM) }
         )

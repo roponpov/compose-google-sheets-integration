@@ -105,6 +105,28 @@
     <string name="member_added">成员已添加</string>
     <string name="the_member_has_been_successfully_registered">成员已成功注册。</string>
     <string name="add_new_member">添加新成员</string>
+    <string name="appearance">外观</string>
+    <string name="language">语言</string>
+    <string name="account">账户</string>
+    <string name="theme">主题</string>
+    <string name="choose_how_the_app_looks">选择应用程序的外观。</string>
+    <string name="light">浅色</string>
+    <string name="bright_background_and_dark_text">亮色背景 + 深色文字</string>
+    <string name="dark">深色</string>
+    <string name="dark_background_and_light_text">深色背景 + 亮色文字</string>
+    <string name="system">系统</string>
+    <string name="follow_your_device_theme">跟随系统主题</string>
+    <string name="app_language">应用语言</string>
+    <string name="choose_the_language_for_the_app_interface">选择应用界面的语言。</string>
+    <string name="language_selected">已选择</string>
+    <string name="logout">登出</string>
+    <string name="sign_out_from_this_device">从此设备登出</string>
+    <string name="are_you_sure_you_want_to_sign_out_from_this_device">你确定要从此设备登出吗？</string>
+    <string name="cancel">取消</string>
+    <string name="checking_your_session">正在检查您的会话…</string>
+    <string name="google_sign_error_message">Google 登录失败，请重试。</string>
+    <string name="google_sign_error_access_message">获取访问令牌失败，请重试。</string>
+    <string name="system_default">系统默认</string>
 
 
 </resources>

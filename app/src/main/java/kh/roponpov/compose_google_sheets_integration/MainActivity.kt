@@ -20,7 +20,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kh.roponpov.compose_google_sheets_integration.core.prefs.AppPreferences
-import kh.roponpov.compose_google_sheets_integration.models.GoogleAuthManagerModel
 import kh.roponpov.compose_google_sheets_integration.ui.theme.AppTheme
 import kh.roponpov.compose_google_sheets_integration.view.add.AddMemberScreen
 import kh.roponpov.compose_google_sheets_integration.view.home.HomeScreen
@@ -101,6 +100,9 @@ class MainActivity : ComponentActivity() {
                                         // 1. mark onboarding as done
                                         AppPreferences.setFirstLaunch(this@MainActivity, false)
 
+                                        // 2. change value on pref and view model
+                                        languageViewModel.setLanguage(selectedLanguage)
+
                                         // after language pick, go to login
                                         navController.navigate("login") {
                                             popUpTo("language") { inclusive = true }
@@ -113,7 +115,7 @@ class MainActivity : ComponentActivity() {
                                 GoogleLoginScreen(
                                     userViewModel = userViewModel,
                                     onLoginSuccess = { token ->
-                                        GoogleAuthManagerModel.accessToken = token
+                                        AppPreferences.saveAccessToken(this@MainActivity,token)
                                         navController.navigate("home") {
                                             popUpTo("login") { inclusive = true }
                                         }

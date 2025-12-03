@@ -14,6 +14,7 @@ import java.util.Locale
 object AppPreferences {
 
     private const val PREF_NAME = "app_prefs"
+    private const val KEY_ACCESS_TOKEN = "access_token"
     private const val KEY_IS_FIRST_LAUNCH = "is_first_launch"
     private const val KEY_LANGUAGE_CODE = "language_code"
     private const val KEY_USER_PROFILE = "user_profile"
@@ -26,6 +27,22 @@ object AppPreferences {
 
     private fun prefs(context: Context): SharedPreferences =
         context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+
+    fun saveAccessToken(context: Context, token: String) {
+        prefs(context).edit {
+            putString(KEY_ACCESS_TOKEN, token)
+        }
+    }
+
+    fun getAccessToken(context: Context): String? {
+        return prefs(context).getString(KEY_ACCESS_TOKEN, null)
+    }
+
+    fun clearAccessToken(context: Context) {
+        prefs(context).edit {
+            remove(KEY_ACCESS_TOKEN)
+        }
+    }
 
     fun isFirstLaunch(context: Context): Boolean =
         prefs(context).getBoolean(KEY_IS_FIRST_LAUNCH, true)

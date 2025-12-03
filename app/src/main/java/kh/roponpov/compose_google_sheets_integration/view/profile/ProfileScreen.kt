@@ -101,9 +101,6 @@ fun ProfileScreen(
     // Theme from ViewModel (single source of truth)
     val themeMode by themeViewModel.theme
 
-    // Font scale can stay local for now
-    var fontScale by remember { mutableFloatStateOf(1.0f) }
-
     // Use enum instead of raw strings
     val languages = listOf(
         AppLanguage.ENGLISH,
@@ -238,17 +235,17 @@ fun ProfileScreen(
                     .padding(horizontal = 16.dp, vertical = 18.dp)
             ) {
                 // ===== Appearance section =====
-                TitleSection("Appearance")
+                TitleSection(stringResource(R.string.appearance))
 
                 // Dark / Light / System -> opens bottom sheet
                 FunctionFeatureSection(
                     icon = R.drawable.theme_icon,
                     iconTint = MaterialTheme.colorScheme.primary,
-                    title = "Theme",
+                    title = stringResource(R.string.theme),
                     subtitle = when (themeMode) {
-                        AppThemeMode.DARK -> "Dark"
-                        AppThemeMode.LIGHT -> "Light"
-                        AppThemeMode.SYSTEM -> "System default"
+                        AppThemeMode.DARK -> stringResource(R.string.dark)
+                        AppThemeMode.LIGHT -> stringResource(R.string.light)
+                        AppThemeMode.SYSTEM -> stringResource(R.string.system_default)
                     },
                     onClick = { openSheet(ProfileSheetType.THEME) }
                 )
@@ -256,12 +253,12 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // ===== Language section =====
-                TitleSection("Language")
+                TitleSection(stringResource(R.string.language))
 
                 FunctionFeatureSection(
                     icon = R.drawable.language_icon,
                     iconTint = MaterialTheme.colorScheme.primary,
-                    title = "Language",
+                    title = stringResource(R.string.language),
                     subtitle = selectedLanguage.getDisplayName(),
                     onClick = { openSheet(ProfileSheetType.LANGUAGE) }
                 )
@@ -269,7 +266,7 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // ===== Account section =====
-                TitleSection("Account")
+                TitleSection(stringResource(R.string.account))
 
                 // Logout row -> opens bottom sheet
                 Surface(
@@ -306,21 +303,21 @@ fun ProfileScreen(
                             Spacer(modifier = Modifier.width(12.dp))
                             Column {
                                 Text(
-                                    text = "Logout",
+                                    text = stringResource(R.string.logout),
                                     style = MaterialTheme.typography.titleMedium.copy(
                                         fontWeight = FontWeight.SemiBold
                                     ),
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = "Sign out from this device",
+                                    text = stringResource(R.string.sign_out_from_this_device),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                                 )
                             }
                         }
                         Text(
-                            text = "LOG OUT",
+                            text = stringResource(R.string.logout),
                             color = MaterialTheme.colorScheme.error,
                             fontWeight = FontWeight.Bold,
                             fontSize = 13.sp

@@ -23,13 +23,14 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kh.roponpov.compose_google_sheets_integration.R
-import kh.roponpov.compose_google_sheets_integration.models.GoogleAuthManagerModel
+import kh.roponpov.compose_google_sheets_integration.core.prefs.AppPreferences
 import kh.roponpov.compose_google_sheets_integration.viewmodel.MemberRegistrationViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,6 +49,10 @@ fun AddMemberScreen(
             darkIcons = darkIcons
         )
     }
+
+    val context = LocalContext.current
+    val accessToken = AppPreferences.getAccessToken(context)
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
@@ -87,8 +92,12 @@ fun AddMemberScreen(
                 .fillMaxSize(),
             navigator = navigator,
             onSubmit = { member ->
-                println(member)
-                memberRegistrationViewModel.submitMember(member,GoogleAuthManagerModel.accessToken ?: "")
+                accessToken?.let { token ->
+                    memberRegistrationViewModel.updateMember(
+                        member = member,
+                        accessToken = token,
+                    )
+                }
             }
         )
     }

@@ -101,14 +101,14 @@ fun GoogleLoginScreen(
                     onLoginSuccess(token)
                 } catch (e: Exception) {
                     Log.e("GoogleLogin", "Failed to get access token", e)
-                    errorMessage = "Failed to get access token. Please try again."
+                    errorMessage = context.getString(R.string.google_sign_error_access_message)
                 } finally {
                     isSigningIn = false
                 }
             }
         } catch (e: ApiException) {
             Log.e("GoogleLogin", "Google sign-in failed", e)
-            errorMessage = "Google sign-in failed. Please try again."
+            errorMessage = context.getString(R.string.google_sign_error_message)
         }
     }
 

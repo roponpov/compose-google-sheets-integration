@@ -105,5 +105,27 @@
     <string name="member_added">ເພີ່ມສະມາຊິກແລ້ວ</string>
     <string name="the_member_has_been_successfully_registered">ສະມາຊິກຖືກລົງທະບຽນສຳເລັດແລ້ວ.</string>
     <string name="add_new_member">ເພີ່ມສະມາຊິກໃໝ່</string>
+    <string name="appearance">ຮູບລັກສະນະ</string>
+    <string name="language">ພາສາ</string>
+    <string name="account">ບັນຊີ</string>
+    <string name="theme">ຮູບແບບສີ</string>
+    <string name="choose_how_the_app_looks">ເລືອກຮູບແບບທີ່ແອັບຈະສະແດງ.</string>
+    <string name="light">ແບບສະຫວ່າງ</string>
+    <string name="bright_background_and_dark_text">ພື້ນຫຼັງສະຫວ່າງ ກັບ ຕົວອັກສອນຂະຫຍາຍ</string>
+    <string name="dark">ແບບມືດ</string>
+    <string name="dark_background_and_light_text">ພື້ນຫຼັງມືດ ກັບ ຕົວອັກສອນສະຫວ່າງ</string>
+    <string name="system">ລະບົບ</string>
+    <string name="follow_your_device_theme">ຕາມຮູບແບບສີຂອງເຄື່ອງ</string>
+    <string name="app_language">ພາສາແອັບ</string>
+    <string name="choose_the_language_for_the_app_interface">ເລືອກພາສາສຳລັບໜ້າຕາແອັບ.</string>
+    <string name="language_selected">ເລືອກແລ້ວ</string>
+    <string name="logout">ອອກຈາກບັນຊີ</string>
+    <string name="sign_out_from_this_device">ອອກຈາກເຄື່ອງນີ້</string>
+    <string name="are_you_sure_you_want_to_sign_out_from_this_device">ເຈົ້າແນ່ໃຈບໍ່ວ່າຈະອອກຈາກເຄື່ອງນີ້?</string>
+    <string name="cancel">ຍົກເລີກ</string>
+    <string name="checking_your_session">ກຳລັງກວດກາ session ຂອງເຈົ້າ…</string>
+    <string name="google_sign_error_message">ລົ້ມເຫຼວໃນການເຊັນເຂົ້າ Google. ກະລຸນາລອງໃໝ່.</string>
+    <string name="google_sign_error_access_message">ບໍ່ສາມາດຮັບ access token ໄດ້. ກະລຸນາລອງໃໝ່.</string>
+    <string name="system_default">ຄ່າມາດຕະຖານຂອງລະບົບ</string>
 
 </resources>

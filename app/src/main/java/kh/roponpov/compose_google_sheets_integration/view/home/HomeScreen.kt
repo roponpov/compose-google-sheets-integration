@@ -34,12 +34,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kh.roponpov.compose_google_sheets_integration.R
-import kh.roponpov.compose_google_sheets_integration.models.GoogleAuthManagerModel
+import kh.roponpov.compose_google_sheets_integration.core.prefs.AppPreferences
 import kh.roponpov.compose_google_sheets_integration.models.MemberFilter
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
 import kh.roponpov.compose_google_sheets_integration.view.component.AppConfirmDialog
@@ -79,6 +80,9 @@ fun HomeScreen(
             darkIcons = darkIcons
         )
     }
+
+    val context = LocalContext.current
+    val accessToken = AppPreferences.getAccessToken(context)
 
     val members by memberRegistrationViewModel
         .memberRegistrations
@@ -214,10 +218,12 @@ fun HomeScreen(
                 isDestructive = true,
                 onConfirm = {
                     showDeleteConfirm = false
-                    memberRegistrationViewModel.deleteMember(
-                        accessToken = GoogleAuthManagerModel.accessToken ?: "",
-                        member = memberToDelete!!
-                    )
+                    accessToken?.let {
+                        memberRegistrationViewModel.deleteMember(
+                            accessToken = it,
+                            member = memberToDelete!!
+                        )
+                    }
                     memberToDelete = null
                 },
                 onCancel = {

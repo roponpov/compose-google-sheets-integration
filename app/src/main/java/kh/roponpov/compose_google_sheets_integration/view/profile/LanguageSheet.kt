@@ -20,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import kh.roponpov.compose_google_sheets_integration.R
 import kh.roponpov.compose_google_sheets_integration.core.language.AppLanguage
 import kh.roponpov.compose_google_sheets_integration.core.language.getDisplayName
 
@@ -34,14 +36,14 @@ fun LanguageSheet(
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
         Text(
-            text = "App Language",
+            text = stringResource(R.string.app_language),
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.SemiBold
             )
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Choose the language for the app interface.",
+            text = stringResource(R.string.choose_the_language_for_the_app_interface),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
         )
@@ -93,7 +95,7 @@ fun LanguageSheet(
 
                     if (isSelected) {
                         Text(
-                            text = "Selected",
+                            text = stringResource(R.string.language_selected),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.primary
                         )

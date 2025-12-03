@@ -38,6 +38,7 @@ class UserViewModel : ViewModel() {
     fun clear(context: Context,activity: Activity) {
         _user.value = null
         AppPreferences.clearUserProfile(context,activity)
+        AppPreferences.clearAccessToken(context)
     }
 
     private fun String?.orElse(default: String = "") = this ?: default
