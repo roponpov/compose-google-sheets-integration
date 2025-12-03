@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kh.roponpov.compose_google_sheets_integration.R
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
 import kh.roponpov.compose_google_sheets_integration.repositories.MemberRegistrationRepository
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +31,7 @@ class MemberRegistrationViewModel : ViewModel() {
 
     sealed class SubmitResult {
         data object Success : SubmitResult()
-        data class Error(val message: String) : SubmitResult()
+        data class Error(val message: Int) : SubmitResult()
     }
 
     private val _submitResult = MutableLiveData<SubmitResult?>(null)
@@ -86,13 +87,14 @@ class MemberRegistrationViewModel : ViewModel() {
                     _submitResult.value = if (success) {
                         SubmitResult.Success
                     } else {
-                        SubmitResult.Error("Failed to submit registration. Please try again.")
+                        SubmitResult.Error(R.string.failed_to_submit_registration)
                     }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
+                    // TODO : Debug this to see the real error : e.message
                     _submitResult.value =
-                        SubmitResult.Error(e.message ?: "Unexpected error occurred.")
+                        SubmitResult.Error(R.string.unexpected_error_occurred)
                 }
             } finally {
                 withContext(Dispatchers.Main) { _isSubmitting.value = false }
@@ -114,13 +116,13 @@ class MemberRegistrationViewModel : ViewModel() {
                     _submitResult.value = if (success) {
                         SubmitResult.Success
                     } else {
-                        SubmitResult.Error("Failed to update member. Please try again.")
+                        SubmitResult.Error(R.string.failed_to_update_member)
                     }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     _submitResult.value =
-                        SubmitResult.Error(e.message ?: "Unexpected error occurred.")
+                        SubmitResult.Error(R.string.unexpected_error_occurred)
                 }
             } finally {
                 withContext(Dispatchers.Main) { _isSubmitting.value = false }
@@ -142,7 +144,7 @@ class MemberRegistrationViewModel : ViewModel() {
                     _deleteResult.value = if (success) {
                         SubmitResult.Success
                     } else {
-                        SubmitResult.Error("Failed to delete member. Please try again.")
+                        SubmitResult.Error(R.string.failed_to_delete_member)
                     }
                 }
 
@@ -153,7 +155,7 @@ class MemberRegistrationViewModel : ViewModel() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     _deleteResult.value =
-                        SubmitResult.Error(e.message ?: "Unexpected error occurred.")
+                        SubmitResult.Error(R.string.unexpected_error_occurred)
                 }
             } finally {
                 withContext(Dispatchers.Main) { _isSubmitting.value = false }

@@ -11,17 +11,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import kh.roponpov.compose_google_sheets_integration.R
+import kh.roponpov.compose_google_sheets_integration.core.language.AppLanguage
+import kh.roponpov.compose_google_sheets_integration.models.MemberFilter
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
 import kh.roponpov.compose_google_sheets_integration.models.PaymentStatus
-
-enum class MemberFilter(val label: String) {
-    All("All"),
-    Paid("Paid"),
-    Unpaid("Unpaid"),
-    Joined("Joined"),
-    NotJoined("Not Joined")
-}
+import kh.roponpov.compose_google_sheets_integration.models.getDisplayName
 
 @Composable
 fun FilterRowSection(
@@ -53,7 +50,7 @@ fun FilterRowSection(
                     borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
                     borderWidth = 1.dp,
                 ),
-                label = { Text(filter.label) },
+                label = { Text(filter.getDisplayName()) },
                 modifier = Modifier.padding(end = 8.dp)
             )
         }

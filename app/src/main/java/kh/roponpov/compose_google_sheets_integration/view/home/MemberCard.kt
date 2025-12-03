@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -49,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import kh.roponpov.compose_google_sheets_integration.R
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
 import kh.roponpov.compose_google_sheets_integration.models.PaymentStatus
+import kh.roponpov.compose_google_sheets_integration.models.getDisplayName
 
 @Composable
 fun MemberCard(
@@ -130,7 +132,7 @@ fun MemberCard(
                         )
 
                         Text(
-                            text = "Member ID : ${member.id}",
+                            text = "${stringResource(R.string.member_id)} : ${member.id}",
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -168,7 +170,7 @@ fun MemberCard(
                         )
 
                         Text(
-                            text = member.degree.text,
+                            text = member.degree.getDisplayName(),
                             color = MaterialTheme.colorScheme.primary,
                             style = MaterialTheme.typography.labelSmall
                         )
@@ -190,14 +192,14 @@ fun MemberCard(
                 ) {
 
                     Text(
-                        "Member Info",
+                        stringResource(R.string.member_info),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.primary
                     )
 
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            "Payment Status: ",
+                            "${stringResource(R.string.payment_status)}: ",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -213,7 +215,7 @@ fun MemberCard(
                                 .padding(horizontal = 5.dp, vertical = 0.dp)
                         ) {
                             Text(
-                                text = if (member.paymentStatus == PaymentStatus.PAID) "Paid" else "Unpaid",
+                                text = if (member.paymentStatus == PaymentStatus.PAID) stringResource(R.string.paid) else stringResource(R.string.unpaid),
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                                 color = if (member.paymentStatus == PaymentStatus.PAID)
                                     Color(0xFF2E7D32)
@@ -225,12 +227,12 @@ fun MemberCard(
 
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            "Gender: ",
+                            "${stringResource(R.string.gender)}: ",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            member.gender.text,
+                            member.gender.getDisplayName(),
                             style = MaterialTheme.typography.bodySmall,
                             maxLines = 1,
                             fontWeight = FontWeight.Bold,
@@ -240,7 +242,7 @@ fun MemberCard(
 
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            "Registered: ",
+                            "${stringResource(R.string.registered)}: ",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -280,7 +282,7 @@ fun MemberCard(
                         )
                         Spacer(Modifier.width(4.dp))
                         Text(
-                            "Edit",
+                            stringResource(R.string.edit),
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -299,7 +301,7 @@ fun MemberCard(
                         )
                         Spacer(Modifier.width(4.dp))
                         Text(
-                            "Delete",
+                            stringResource(R.string.delete),
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.error
                         )
@@ -341,7 +343,7 @@ private fun JoinGroupChip(joined: Boolean) {
             )
 
             Text(
-                text = if (joined) "Joined" else "Not joined",
+                text = if (joined) stringResource(R.string.joined) else stringResource(R.string.not_joined),
                 color = textColor,
                 style = MaterialTheme.typography.labelSmall
             )
@@ -362,7 +364,7 @@ private fun ContactSection(email: String, phone: String, address: String) {
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         Text(
-            "Contact",
+            stringResource(R.string.contact),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.primary
         )
@@ -461,7 +463,7 @@ private fun RemarkSection(remark: String){
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                "Remark",
+                stringResource(R.string.remark),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.primary
             )

@@ -30,13 +30,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import kh.roponpov.compose_google_sheets_integration.R
 import kh.roponpov.compose_google_sheets_integration.models.DegreeType
 import kh.roponpov.compose_google_sheets_integration.models.GenderType
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
@@ -59,6 +62,7 @@ fun AddMemberForm(
     onSubmit: (MemberRegistrationModel) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
 
     // === FORM STATES ===
     var latinName by rememberSaveable { mutableStateOf("") }
@@ -115,9 +119,9 @@ fun AddMemberForm(
             Spacer(modifier = Modifier.height(16.dp))
             // LATIN NAME
             AppTextField(
-                label = "Latin Name",
+                label = stringResource(R.string.latin_name),
                 value = latinName,
-                placeholder = "Enter your latin name",
+                placeholder = stringResource(R.string.enter_your_latin_name),
                 onValueChange = { latinName = it },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -131,9 +135,9 @@ fun AddMemberForm(
 
             // KHMER NAME
             AppTextField(
-                label = "Khmer Name",
+                label = stringResource(R.string.khmer_name),
                 value = khmerName,
-                placeholder = "Enter your khmer name",
+                placeholder = stringResource(R.string.enter_your_khmer_name),
                 onValueChange = { khmerName = it },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -151,8 +155,8 @@ fun AddMemberForm(
                 onExpandedChange = { genderExpanded = !genderExpanded },
             ) {
                 AppDropdownField(
-                    label = "Gender",
-                    value = gender?.text ?: "Select gender",
+                    label = stringResource(R.string.gender),
+                    value = gender?.text ?: stringResource(R.string.select_gender),
                     valueStyle = MaterialTheme.typography.bodySmall.copy(
                         fontSize = 13.sp,
                         color = if (gender == null) Color.Gray else MaterialTheme.colorScheme.onBackground
@@ -185,9 +189,9 @@ fun AddMemberForm(
 
             // Email
             AppTextField(
-                label = "Email",
+                label = stringResource(R.string.email),
                 value = email,
-                placeholder = "Enter your email",
+                placeholder = stringResource(R.string.enter_your_email),
                 onValueChange = { email = it },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -202,9 +206,9 @@ fun AddMemberForm(
 
             // Phone
             AppTextField(
-                label = "Phone",
+                label = stringResource(R.string.phone),
                 value = phone,
-                placeholder = "Enter your phone number",
+                placeholder = stringResource(R.string.enter_your_phone_number),
                 onValueChange = { newValue ->
                     phone = newValue.filter { it.isDigit() }
                 },
@@ -229,8 +233,8 @@ fun AddMemberForm(
                         .fillMaxWidth()
                         .padding(bottom = 12.dp)
                         .menuAnchor(MenuAnchorType.PrimaryNotEditable),
-                    label = "Payment Status",
-                    value = paymentStatus?.text ?: "Select payment status",
+                    label = stringResource(R.string.payment_status),
+                    value = paymentStatus?.text ?: stringResource(R.string.select_payment_status),
                     valueStyle = MaterialTheme.typography.bodySmall.copy(
                         fontSize = 13.sp,
                         color = if (paymentStatus == null) Color.Gray else MaterialTheme.colorScheme.onBackground
@@ -259,8 +263,8 @@ fun AddMemberForm(
 
             // Address (multiline)
             AppTextArea(
-                label = "Address",
-                placeholder = "Enter the address",
+                label = stringResource(R.string.address),
+                placeholder = stringResource(R.string.enter_the_address),
                 value = address,
                 onValueChange = { address = it },
                 modifier = Modifier
@@ -272,9 +276,9 @@ fun AddMemberForm(
 
             // Date of Birth
             AppDatePickerTextField(
-                label = "Date of Birth",
+                label = stringResource(R.string.date_of_birth),
                 value = dob,
-                placeholder = "Select your date of birth",
+                placeholder = stringResource(R.string.select_your_date_of_birth),
                 onDobChange = { dob = it },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -285,9 +289,9 @@ fun AddMemberForm(
 
             // Registration Date
             AppDatePickerTextField(
-                label = "Registration Date",
+                label = stringResource(R.string.registration_date),
                 value = registrationDate,
-                placeholder = "Enter your registration date",
+                placeholder = stringResource(R.string.enter_your_registration_date),
                 onDobChange = { registrationDate = it },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -306,8 +310,8 @@ fun AddMemberForm(
                         .fillMaxWidth()
                         .padding(bottom = 12.dp)
                         .menuAnchor(MenuAnchorType.PrimaryNotEditable),
-                    label = "Degree",
-                    value = degree?.text ?: "Select degree",
+                    label = stringResource(R.string.degree),
+                    value = degree?.text ?: stringResource(R.string.select_degree),
                     valueStyle = MaterialTheme.typography.bodySmall.copy(
                         fontSize = 13.sp,
                         color = if (degree == null) Color.Gray else MaterialTheme.colorScheme.onBackground
@@ -335,16 +339,16 @@ fun AddMemberForm(
             }
 
             AppSettingSwitchRow(
-                title = "Join Group",
-                subtitle = "Allow this user to join the group",
+                title = stringResource(R.string.join_group),
+                subtitle = stringResource(R.string.allow_this_user_to_join_the_group),
                 checked = joinGroup,
                 onCheckedChange = { joinGroup = it }
             )
 
             // Remark
             AppTextArea(
-                label = "Remark",
-                placeholder = "Enter the remark",
+                label = stringResource(R.string.remark),
+                placeholder = stringResource(R.string.enter_the_remark),
                 value = remark,
                 onValueChange = { remark = it },
                 modifier = Modifier
@@ -366,34 +370,34 @@ fun AddMemberForm(
                     val phoneRegex = Regex("^0[0-9]{7,9}$")
 
                     // === VALIDATION ===
-                    latinNameError = if (latinName.isBlank()) "Latin name is required" else null
-                    khmerNameError = if (khmerName.isBlank()) "Khmer name is required" else null
-                    genderError = if (gender == null) "Please select gender" else null
+                    latinNameError = if (latinName.isBlank()) context.getString(R.string.latin_name_is_required) else null
+                    khmerNameError = if (khmerName.isBlank()) context.getString(R.string.khmer_name_is_required) else null
+                    genderError = if (gender == null) context.getString(R.string.please_select_gender) else null
 
                     emailError = when {
-                        email.isBlank() -> "Email is required"
+                        email.isBlank() -> context.getString(R.string.email_is_required)
                         !Patterns.EMAIL_ADDRESS.matcher(email).matches() ->
-                            "The email format is incorrect (example: user@gmail.com)"
+                            context.getString(R.string.the_email_format_is_incorrect)
                         else -> null
                     }
 
                     phoneError = when {
                         phone.isBlank() ->
-                            "Please enter your phone number"
+                            context.getString(R.string.please_enter_your_phone_number)
                         !phone.all { it.isDigit() } ->
-                            "Phone number must contain digits only"
+                            context.getString(R.string.phone_number_must_contain_digits_only)
                         phone.length !in 9..10 ->
-                            "Phone number must be 9 to 10 digits"
+                            context.getString(R.string.phone_number_must_be_9_to_10_digits)
                         !phoneRegex.matches(phone) ->
-                            "Invalid phone number format. Example: 098765432"
+                            context.getString(R.string.invalid_phone_number_format)
                         else -> null
                     }
 
-                    paymentStatusError = if (paymentStatus == null) "Please select payment status" else null
-                    addressError = if (address.isBlank()) "Address is required" else null
-                    dobError = if (dob.isBlank()) "Date of birth is required" else null
-                    registrationDateError = if (registrationDate.isBlank()) "Registration date is required" else null
-                    degreeError = if (degree == null) "Please select degree" else null
+                    paymentStatusError = if (paymentStatus == null) context.getString(R.string.please_select_payment_status) else null
+                    addressError = if (address.isBlank()) context.getString(R.string.address_is_required) else null
+                    dobError = if (dob.isBlank()) context.getString(R.string.date_of_birth_is_required) else null
+                    registrationDateError = if (registrationDate.isBlank()) context.getString(R.string.registration_date_is_required) else null
+                    degreeError = if (degree == null) context.getString(R.string.please_select_degree) else null
 
                     val hasError =
                         latinNameError != null ||
@@ -432,7 +436,7 @@ fun AddMemberForm(
                 },
         ) {
             Text(
-                "Submit",
+                stringResource(R.string.submit),
                 modifier = Modifier.align(Alignment.Center),
                 style = MaterialTheme.typography.titleMedium.copy(
                     color = Color.White
@@ -442,14 +446,14 @@ fun AddMemberForm(
 
         if (isSubmitting) {
             AppLoadingDialog(
-                loadingText = "Submitting..."
+                loadingText = stringResource(R.string.submitting)
             )
         }
 
         submitResult?.let { result ->
             AppCustomDialog(
-                title = "Member added",
-                description = "The member has been successfully registered.",
+                title = stringResource(R.string.member_added),
+                description = stringResource(R.string.the_member_has_been_successfully_registered),
                 result = result,
                 onDismiss = {
                     memberRegistrationViewModel.clearSubmitResult()

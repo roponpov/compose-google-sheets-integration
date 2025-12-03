@@ -24,9 +24,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kh.roponpov.compose_google_sheets_integration.R
 
 @Composable
 fun SearchSection(
@@ -83,7 +85,7 @@ fun SearchSection(
                 ) {
                     if (value.isEmpty()) {
                         Text(
-                            text = "Search by name, email, phone...",
+                            text = stringResource(R.string.search_placeholder),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             style = placeholderStyle

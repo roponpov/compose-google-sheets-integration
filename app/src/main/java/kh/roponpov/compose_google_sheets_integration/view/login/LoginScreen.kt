@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -157,7 +158,7 @@ fun GoogleLoginScreen(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Text(
-                            text = "Sheet Sync",
+                            text = stringResource(R.string.app_name),
                             style = MaterialTheme.typography.headlineSmall.copy(
                                 fontWeight = FontWeight.SemiBold
                             ),
@@ -167,7 +168,7 @@ fun GoogleLoginScreen(
                         Spacer(modifier = Modifier.height(4.dp))
 
                         Text(
-                            text = "Sign in with your Google Account to securely sync data to Google Sheets.",
+                            text = stringResource(R.string.sign_in_with_your_google_account),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
@@ -188,7 +189,7 @@ fun GoogleLoginScreen(
                                 verticalArrangement = Arrangement.spacedBy(16.dp)
                             ) {
                                 Text(
-                                    text = "What you get",
+                                    text = stringResource(R.string.what_you_get),
                                     style = MaterialTheme.typography.titleMedium.copy(
                                         fontWeight = FontWeight.SemiBold
                                     )
@@ -196,20 +197,20 @@ fun GoogleLoginScreen(
 
                                 FeatureRow(
                                     icon = R.drawable.instant_synce_icon,
-                                    title = "Instant sync",
-                                    subtitle = "Send data straight into your Google Sheets without exporting files."
+                                    title = stringResource(R.string.instant_sync),
+                                    subtitle = stringResource(R.string.send_data_straight_into_your_google_sheets)
                                 )
 
                                 FeatureRow(
                                     icon = R.drawable.one_tap_login,
-                                    title = "One-tap login",
-                                    subtitle = "Use the Google account already on your device. No extra passwords."
+                                    title = stringResource(R.string.one_tap_login),
+                                    subtitle = stringResource(R.string.use_the_google_account)
                                 )
 
                                 FeatureRow(
                                     icon = R.drawable.scoped_access_icon,
-                                    title = "Scoped access",
-                                    subtitle = "We only request Sheets access. You can revoke it anytime."
+                                    title = stringResource(R.string.scoped_access),
+                                    subtitle = stringResource(R.string.we_only_request_sheets_access)
                                 )
                             }
                         }
@@ -226,14 +227,14 @@ fun GoogleLoginScreen(
 
                         if (isSigningIn) {
                             AppLoadingDialog(
-                                loadingText = "Connecting to your Google Account…"
+                                loadingText = stringResource(R.string.connecting_to_your_google_account)
                             )
                         }
 
                         // ========= ERROR DIALOG =========
                         if (errorMessage != null) {
                             AppErrorDialog(
-                                title = "Sign-in failed",
+                                title = stringResource(R.string.sign_in_failed),
                                 message = errorMessage!!,
                                 onDismiss = { errorMessage = null }
                             )
@@ -250,7 +251,7 @@ fun GoogleLoginScreen(
                 ) {
 
                     Text(
-                        text = "Developed by Pov Ropon • v1.0.0",
+                        text = stringResource(R.string.developed_by),
                         style = MaterialTheme.typography.labelSmall.copy(
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                         ),
@@ -260,7 +261,7 @@ fun GoogleLoginScreen(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
-                        text = "Manage access anytime in your Google Account settings.",
+                        text = stringResource(R.string.manage_access_anytime),
                         style = MaterialTheme.typography.bodySmall.copy(
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                         ),
@@ -300,7 +301,8 @@ private fun FeatureRow(
         }
 
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Text(
                 text = title,
@@ -345,7 +347,7 @@ private fun GoogleSignInButton(
             )
 
             Text(
-                text = "Continue with Google",
+                text = stringResource(R.string.continue_with_google),
                 style = MaterialTheme.typography.labelLarge.copy(color = Color.White),
                 modifier = Modifier.padding(vertical = 2.dp)
             )

@@ -33,12 +33,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kh.roponpov.compose_google_sheets_integration.R
 import kh.roponpov.compose_google_sheets_integration.models.GoogleAuthManagerModel
+import kh.roponpov.compose_google_sheets_integration.models.MemberFilter
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
 import kh.roponpov.compose_google_sheets_integration.view.component.AppConfirmDialog
 import kh.roponpov.compose_google_sheets_integration.view.component.AppCustomDialog
@@ -196,7 +198,7 @@ fun HomeScreen(
 
         if (isSubmitting) {
             AppLoadingDialog(
-                loadingText = "Deleting member..."
+                loadingText = stringResource(R.string.deleting_member)
             )
         }
 
@@ -204,11 +206,11 @@ fun HomeScreen(
             val name = memberToDelete!!.latinName
 
             AppConfirmDialog(
-                title = "Remove this member?",
-                message = "“$name” will be permanently removed from the list. This action cannot be undone.",
+                title = stringResource(R.string.remove_this_member),
+                message = "“$name” ${stringResource(R.string.delete_member_message)}",
                 highlightedText = name,
-                confirmText = "Delete",
-                cancelText = "Keep",
+                confirmText = stringResource(R.string.delete),
+                cancelText = stringResource(R.string.keep),
                 isDestructive = true,
                 onConfirm = {
                     showDeleteConfirm = false
@@ -228,11 +230,11 @@ fun HomeScreen(
         deleteResult?.let { result ->
             AppCustomDialog(
                 title = if (result is MemberRegistrationViewModel.SubmitResult.Success)
-                    "Member deleted"
+                    stringResource(R.string.member_deleted)
                 else
-                    "Delete failed",
+                    stringResource(R.string.delete_failed),
                 description = if (result is MemberRegistrationViewModel.SubmitResult.Success)
-                    "The member has been deleted successfully."
+                    stringResource(R.string.the_member_has_been_deleted_successfully)
                 else
                     "",
                 result = result,

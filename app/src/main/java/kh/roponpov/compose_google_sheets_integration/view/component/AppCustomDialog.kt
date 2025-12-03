@@ -21,11 +21,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import kh.roponpov.compose_google_sheets_integration.R
 import kh.roponpov.compose_google_sheets_integration.viewmodel.MemberRegistrationViewModel
 
 @Composable
@@ -84,7 +86,7 @@ fun AppCustomDialog(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = if (isSuccess) title else "Something went wrong",
+                    text = if (isSuccess) title else stringResource(R.string.something_went_wrong),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.SemiBold
                     ),
@@ -99,7 +101,7 @@ fun AppCustomDialog(
                         is MemberRegistrationViewModel.SubmitResult.Success ->
                             description
                         is MemberRegistrationViewModel.SubmitResult.Error ->
-                            result.message
+                            stringResource(result.message)
                     },
                     style = MaterialTheme.typography.bodyMedium.copy(
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
@@ -126,7 +128,7 @@ fun AppCustomDialog(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "OK",
+                        text = stringResource(R.string.ok),
                         style = MaterialTheme.typography.titleMedium.copy(
                             color = MaterialTheme.colorScheme.onPrimary
                         )

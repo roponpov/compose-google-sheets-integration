@@ -21,9 +21,11 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kh.roponpov.compose_google_sheets_integration.R
 import kh.roponpov.compose_google_sheets_integration.models.GoogleAuthManagerModel
 import kh.roponpov.compose_google_sheets_integration.viewmodel.MemberRegistrationViewModel
 
@@ -63,7 +65,7 @@ fun UpdateMemberScreen(
                 ),
                 title = {
                     Text(
-                        "Update member",
+                        stringResource(R.string.update_member),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
