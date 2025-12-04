@@ -92,7 +92,6 @@ class MemberRegistrationViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    // TODO : Debug this to see the real error : e.message
                     _submitResult.value =
                         SubmitResult.Error(R.string.unexpected_error_occurred)
                 }

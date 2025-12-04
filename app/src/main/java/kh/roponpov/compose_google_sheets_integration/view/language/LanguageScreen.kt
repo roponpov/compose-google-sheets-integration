@@ -1,7 +1,5 @@
 package kh.roponpov.compose_google_sheets_integration.view.language
 
-import kh.roponpov.compose_google_sheets_integration.R
-import kh.roponpov.compose_google_sheets_integration.core.language.AppLanguage
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,8 +37,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import kh.roponpov.compose_google_sheets_integration.R
+import kh.roponpov.compose_google_sheets_integration.core.language.AppLanguage
 import kh.roponpov.compose_google_sheets_integration.core.language.getDisplayName
 
 @Composable

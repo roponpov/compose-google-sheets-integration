@@ -62,7 +62,7 @@ val LightColorScheme = lightColorScheme(
 
 
 val DarkColorScheme = darkColorScheme(
-    primary = primaryLight,         // Lighter tone on dark bg
+    primary = primaryLight,
     onPrimary = Color.Black,
     primaryContainer = primaryDark,
     onPrimaryContainer = Color(0xFFD7E2FF),

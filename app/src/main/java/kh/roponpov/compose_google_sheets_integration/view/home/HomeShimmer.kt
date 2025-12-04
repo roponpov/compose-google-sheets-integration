@@ -35,15 +35,12 @@ import androidx.compose.ui.Alignment
 @Composable
 fun MemberListShimmer() {
     val listState = rememberLazyListState()
-//    val overscroll = rememberOverscrollEffect()
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = listState,
         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
-//        overscrollEffect = overscroll,
-
     ) {
         items(6) {
             MemberCardShimmer()

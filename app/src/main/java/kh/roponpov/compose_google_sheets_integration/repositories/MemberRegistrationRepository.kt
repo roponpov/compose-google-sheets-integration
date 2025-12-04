@@ -1,7 +1,7 @@
 package kh.roponpov.compose_google_sheets_integration.repositories
 
+import kh.roponpov.compose_google_sheets_integration.BuildConfig
 import kh.roponpov.compose_google_sheets_integration.models.MemberRegistrationModel
-import kh.roponpov.compose_google_sheets_integration.constant.CredentialKeys
 import kh.roponpov.compose_google_sheets_integration.models.BatchUpdateRequestModel
 import kh.roponpov.compose_google_sheets_integration.models.BatchUpdateResponseModel
 import kh.roponpov.compose_google_sheets_integration.models.ValueRangeModel
@@ -26,9 +26,9 @@ class MemberRegistrationRepository {
         return withContext(Dispatchers.IO) {
             try {
                 val response = NetworkService.sheetsApi.getSheetValues(
-                    sheetId = CredentialKeys.SHEET_ID,
+                    sheetId = BuildConfig.SHEET_ID,
                     range = readRange,
-                    apiKey = CredentialKeys.GOOGLE_SHEETS_API_KEY
+                    apiKey = BuildConfig.GOOGLE_SHEETS_API_KEY
                 )
 
                 val values = response.values ?: emptyList()
@@ -69,9 +69,9 @@ class MemberRegistrationRepository {
     ): Boolean = withContext(Dispatchers.IO) {
         try {
             val response = NetworkService.sheetsApi.getSheetValues(
-                sheetId = CredentialKeys.SHEET_ID,
+                sheetId = BuildConfig.SHEET_ID,
                 range = readRange,
-                apiKey = CredentialKeys.GOOGLE_SHEETS_API_KEY
+                apiKey = BuildConfig.GOOGLE_SHEETS_API_KEY
             )
             val values = response.values ?: emptyList()
             val id = getNextId(values)
@@ -95,7 +95,7 @@ class MemberRegistrationRepository {
             val body = ValueRangeModel(values = listOf(row))
 
             NetworkService.sheetsApi.appendValues(
-                sheetId = CredentialKeys.SHEET_ID,
+                sheetId = BuildConfig.SHEET_ID,
                 range = appendRange,
                 valueInputOption = "USER_ENTERED",
                 body = body,
@@ -138,7 +138,7 @@ class MemberRegistrationRepository {
 
         val response = NetworkService.sheetsApi.updateValues(
             auth = "Bearer $accessToken",
-            spreadsheetId = CredentialKeys.SHEET_ID,
+            spreadsheetId = BuildConfig.SHEET_ID,
             range = range,
             valueInputOption = "USER_ENTERED",
             body = body
@@ -177,7 +177,7 @@ class MemberRegistrationRepository {
             val response: BatchUpdateResponseModel =
                 NetworkService.sheetsApi.batchUpdate(
                     auth = "Bearer $accessToken",
-                    spreadsheetId = CredentialKeys.SHEET_ID,
+                    spreadsheetId = BuildConfig.SHEET_ID,
                     body = requestBody
                 )
 

@@ -36,7 +36,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -97,8 +96,6 @@ fun ProfileScreen(
     val headerHeight = 300.dp
     val sheetOverlap = 40.dp
 
-    // Theme + font state (hook this to DataStore later if you want)
-    // Theme from ViewModel (single source of truth)
     val themeMode by themeViewModel.theme
 
     // Use enum instead of raw strings
@@ -360,7 +357,6 @@ fun ProfileScreen(
                             onSelect = {
                                 themeViewModel.setTheme(it)
                                 closeSheet()
-                                // TODO: hook theme change to your app theme system
                             }
                         )
                     }

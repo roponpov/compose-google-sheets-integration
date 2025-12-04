@@ -5,9 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -33,7 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -52,15 +50,15 @@ import kh.roponpov.compose_google_sheets_integration.viewmodel.UserViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    paddingValues: PaddingValues,
+    padding: PaddingValues,
     navigator: NavController,
     userViewModel: UserViewModel,
     memberRegistrationViewModel: MemberRegistrationViewModel,
 ) {
+    val context = LocalContext.current
+    val accessToken = AppPreferences.getAccessToken(context)
 
     val systemUiController = rememberSystemUiController()
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val darkIcons = primaryColor.luminance() > 0.5f
 
     var searchQuery by remember { mutableStateOf("") }
     var selectedFilter by remember { mutableStateOf(MemberFilter.All) }
@@ -76,13 +74,10 @@ fun HomeScreen(
 
     SideEffect {
         systemUiController.setStatusBarColor(
-            color = primaryColor,
-            darkIcons = darkIcons
+            color = Color.Transparent,
+            darkIcons = false
         )
     }
-
-    val context = LocalContext.current
-    val accessToken = AppPreferences.getAccessToken(context)
 
     val members by memberRegistrationViewModel
         .memberRegistrations
@@ -115,8 +110,9 @@ fun HomeScreen(
     }
 
     Scaffold(
-        modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
+        modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0),
         topBar = {
             TopBarSection(members.size,userViewModel,navigator)
         },

@@ -46,6 +46,8 @@ android {
         }
 
         val clientId = localProps.getProperty("CLIENT_ID") ?: ""
+        val sheetId = localProps.getProperty("SHEET_ID") ?: ""
+        val googleSheetsApiKey = localProps.getProperty("GOOGLE_SHEETS_API_KEY") ?: ""
 
         applicationId = "kh.roponpov.compose_google_sheets_integration"
         minSdk = 24
@@ -59,6 +61,16 @@ android {
             "String",
             "CLIENT_ID",
             "\"$clientId\""
+        )
+        buildConfigField(
+            "String",
+            "SHEET_ID",
+            "\"$sheetId\""
+        )
+        buildConfigField(
+            "String",
+            "GOOGLE_SHEETS_API_KEY",
+            "\"$googleSheetsApiKey\""
         )
     }
 

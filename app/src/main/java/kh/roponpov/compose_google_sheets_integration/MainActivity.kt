@@ -55,6 +55,11 @@ class MainActivity : ComponentActivity() {
             AppTheme(
                 themeMode = theme
             ) {
+                val navController = rememberNavController()
+                val languageViewModel: LanguageViewModel = viewModel()
+                val userViewModel: UserViewModel = viewModel()
+                val memberRegistrationModel: MemberRegistrationViewModel = viewModel()
+
                 val isLoading by appStartupViewModel
                     .isLoading
                     .collectAsStateWithLifecycle()
@@ -62,11 +67,6 @@ class MainActivity : ComponentActivity() {
                 val startDestination by appStartupViewModel
                     .startDestination
                     .collectAsStateWithLifecycle()
-
-                val navController = rememberNavController()
-                val languageViewModel: LanguageViewModel = viewModel()
-                val userViewModel: UserViewModel = viewModel()
-                val memberRegistrationModel: MemberRegistrationViewModel = viewModel()
 
                 LaunchedEffect(Unit) {
                     userViewModel.loadSavedUser(this@MainActivity)
@@ -125,7 +125,7 @@ class MainActivity : ComponentActivity() {
 
                             composable("home") {
                                 HomeScreen(
-                                    paddingValues = padding,
+                                    padding = padding,
                                     navigator = navController,
                                     userViewModel = userViewModel,
                                     memberRegistrationViewModel = memberRegistrationModel
